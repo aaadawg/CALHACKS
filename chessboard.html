@@ -8,7 +8,7 @@
     <meta name="description" content="A Chat-App">
     <meta name="author" content="Rohit Lalchandani">
 
-    <title>CALHACKS Checkers</title>
+    <title>CalHacks Checkers</title>
 
     <!-- Bootstrap core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap -->
@@ -40,10 +40,14 @@
     <script src="js/logic.js"></script>
     <script>
 
-        var board;
+        var board; // JS Object representing board
         var hasMoved = false; // If you have moved
         var player; // Which player you are
         var turn; // Who turn it is
+
+        var selectedPiece; // JS Object of selected
+        var src; // Coordinates of selected piece
+        var hasSelectedPiece = false; // If a piece has been selected
 
         var socket = io(); // Create a new socket for this user
 
@@ -51,21 +55,29 @@
         socket.on('board', function(boardJSON) {
             board = JSON.parse(boardJSON);
             drawboard(board);
+        });
+
+        socket.on('player', function(playerType) {
+            console.log(playerType);
+            player = playerType;
+        });
+
+        socket.on('startGame', function(firstTurn) {
+            turn = firstTurn;
         })
 
-
-        var selectedPiece;
-        var src;
-        var hasSelectedPiece = false;
-
+        /* Making a selection or move */
         $('table').on("click", ".location",function() {
 
             if (!hasSelectedPiece && !hasMoved) { // Selecting a piece
-
                 src = $(this).attr('id').split("-"); // [x, y]
                 var hasPiece = $(this).attr('hasPiece');
                 var potentialPiece = board[src[0]][src[1]]; // we don't know if we can select this piece
+                console.log(hasPiece);
+                console.log(potentialPiece);
+                console.log(turn);
                 if (hasPiece === "true" && canSelect(potentialPiece)) {
+                    console.log("SELECTED");
                     selectedPiece = potentialPiece; // Get Piece from Board
                     hasSelectedPiece = true;
                 }

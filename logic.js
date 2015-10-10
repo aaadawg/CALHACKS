@@ -11,8 +11,8 @@ function drawboard(board) {
             }   
         }
         $("#chess_board").append("</tr>");
-        }
     }
+}
 
 function canSelect(piece) {
 	if (piece == null || turn !== player) {

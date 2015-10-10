@@ -83,7 +83,7 @@ io.on('connection', function(socket) {
 	socket.emit('player', colorForSocket); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
 
-	if (numberOfClients == 4) {
+	if (numberOfClients == 1) {
 		io.emit('startGame', turn);
 	}
 

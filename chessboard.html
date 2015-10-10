@@ -74,8 +74,11 @@
         $('table').on("click", ".location",function() {
 
             var hasPiece = $(this).attr('hasPiece');
+            var tempSrc = $(this).attr('id').split("-"); // [x, y]
+            tempSrc = [parseInt(src[0]), parseInt(src[1])];
+            var tempPiece = board[tempSrc[0]][tempSrc[1]]
 
-            if (hasPiece === "true" && !hasMoved) { // Selecting a piece
+            if (hasPiece === "true" && !hasMoved && tempPiece.team == player) { // Selecting a piece
                 src = $(this).attr('id').split("-"); // [x, y]
                 src = [parseInt(src[0]), parseInt(src[1])];
                 var hasPiece = $(this).attr('hasPiece');
@@ -91,10 +94,6 @@
                 var move_status = canMove(selectedPiece, src, dest);
                 if (move_status !== -1) { // we are at least moving
                     // Create New Board Object
-                    if (!hasMoved) {
-                        board[dest[0]][dest[1]] = selectedPiece;
-                        board[src[0]][src[1]] = null;
-                    }
                     if (move_status === 1) { //capture
                         board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
                         board[dest[0]][dest[1]] = selectedPiece;
@@ -102,6 +101,8 @@
                         src = dest;
                     }
                     if (move_status === 0 && !hasMoved) {//move
+                        board[dest[0]][dest[1]] = selectedPiece;
+                        board[src[0]][src[1]] = null;
                         hasSelectedPiece = false; //turn has to be over
                         
                     }

@@ -14,6 +14,6 @@ app.use(express.static('public'));
 // Routing for webpages
 app.get('/', function(req, res) {
 
-  res.send("hello world!");
+  res.sendfile("chessboard.html");
 
 });

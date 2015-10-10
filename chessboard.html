@@ -124,6 +124,22 @@
         });
     </script>
 
+    <script>
+    function drawboard(board) {
+        for (var i = 0; i < board.length; i++) {
+            $("#chess_board").append("<tr>");
+            for (var j = 0; j < board[i].length; j++) {
+                if (elem == null) {
+                    $("#chess_board").append("<td class='location' id=" + i + "-" + j "></td>");
+                } else {
+                    $("#chess_board").append("<td id=" + i + "-" + j " class='location pawn " + " " + elem.team ">&#9823; </td>");
+                }   
+            }
+            $("#chess_board").append("</tr>");
+        }
+    }
+    </script>
+
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>
   </body>

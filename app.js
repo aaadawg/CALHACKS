@@ -1,4 +1,4 @@
-/* Creates a web server */
+/* Creates a web <server */
 var express = require('express'), // Creates an express instance
     app = express(),
     server = require('http').createServer(app), // Creates a web server

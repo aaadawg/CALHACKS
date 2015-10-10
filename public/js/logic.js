@@ -70,3 +70,10 @@ function endTurn() {
 	selectedPiece = null;
 	src = null;
 }
+
+function canKing(piece, location) {
+	if (piece.team == "gold" && location[1] == 0) || (piece.team == "blue" && location[1] == 11) || (piece.team == "red" && location[0] == 11) || (piece.team == "white" && location[0] == 0) {
+		return true;
+	}
+	return false;
+}

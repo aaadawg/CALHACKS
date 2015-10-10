@@ -41,7 +41,9 @@ var players = ['black', 'white', 'gold', 'blue'];
 var availablePlayers = ['black', 'white', 'gold', 'blue'];
 var socketIDToColor = {};
 var socketIDToSocket = {}
-var turn = players[0];
+var turnCounter = 0;
+var turn = players[turnCounter % 4];
+
 
 
 /* Create a new piece object */
@@ -95,9 +97,16 @@ io.on('connection', function(socket) {
 		numberOfClients--;
 	});
 
-	socket.on('endTurn', function(msg) {
+	socket.on('turnEnded', function(msg) {
 		var newGameState = JSON.parse(msg);
+		turnCounter++;
+		turn = players[turnCounter % 4];
+		io.emit('startGame', turn);
+	})
 
+	socket.on('refreshBoard', function(JSONBoard) {
+		board = JSON.parse(JSONBoard);
+		io.emit('board', JSON.stringify(board));
 	})
 	
 });

@@ -72,13 +72,13 @@ function endTurn() {
 }
 
 function canKing(piece, location) {
-	if (piece.team == "gold" && location[1] == 0) {
+	if (piece.team == "gold" && location[0] == 0) {
 		return true;
-	} else if (piece.team == "blue" && location[1] == 11) {
+	} else if (piece.team == "blue" && location[0] == 11) {
 		return true;
-	} else if (piece.team == "red" && location[0] == 11) {
+	} else if (piece.team == "red" && location[1] == 11) {
 		return true;
-	} else if (piece.team == "white" && location[0] == 0) {
+	} else if (piece.team == "white" && location[1] == 0) {
 		return true;
 	} else {
 		return false;

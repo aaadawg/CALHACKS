@@ -25,7 +25,7 @@ function canSelect(piece) {
 	}
 }
 
-function canMove(piece, src, dst) {
+function canMove(piece, src, dest) {
 
 	if (hasSelectedPiece) {
 		var diffX = Math.abs(src[0] - dest[0]);

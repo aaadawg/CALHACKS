@@ -32,11 +32,11 @@ function canMove(piece, src, dest) {
 		var diffY = Math.abs(src[1] - dest[1]);
 		var product = diffX * diffY;
 		var sum = diffX + diffY;
-		if (board[dest[0]][dest[1]] === null) { //make sure place clicked has no piece
+		if (board[dest[0]][dest[1]] == null) { //make sure place clicked has no piece
 			if (piece.isKing && (product == 1 || product == 4)) {
 				if (product === 4)  { //capture diagonal
 					var enemyPiece = board[(src[0] + dest[0])/2][(src[1] + dest[1])/2];
-					if (enemyPiece !== null && enemyPiece.team != player) {//enemyPiece on different team
+					if (enemyPiece != null && enemyPiece.team != player) {//enemyPiece on different team
 						return 1; // move is a capture
 					}
 				} else {
@@ -51,7 +51,7 @@ function canMove(piece, src, dest) {
 						} else { //aligned on x axis
 							enemyPiece = board[(src[0] + dest[0])/2][dest[1]];
 						}
-						if (enemyPiece !== null && enemyPiece.team != player) {//enemyPiece on different team
+						if (enemyPiece != null && enemyPiece.team != player) {//enemyPiece on different team
 							return 1; // move is a capture;
 						}
 					} else {

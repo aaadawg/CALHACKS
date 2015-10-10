@@ -12,9 +12,9 @@
  *************************************************************************/
 
 
-/*************************
- * Creates a web <server *
- *************************/
+/************************
+ * Creates a web server *
+ ************************/
 var express = require('express'), // Creates an express instance
     app = express(),
     server = require('http').createServer(app), // Creates a web server
@@ -69,7 +69,9 @@ function createBoard() {
 			[null, null, createPiece("gold", [11, 3]), null, createPiece("gold", [10, 5]), null, createPiece("gold", [10, 7]), null, createPiece("gold", [10, 9]), null, null, null]];
 }
 
-
+/*************************
+ * Socket.io Connections *
+ *************************/
 io.on('connection', function(socket) {
 	
 	numberOfClients++;

@@ -99,6 +99,8 @@
                     }
                     if (move_status === 1) { //capture
                         board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
+                        oard[dest[0]][dest[1]] = selectedPiece;
+                        board[src[0]][src[1]] = null;
                         src = dest;
                     }
                     if (move_status === 0 && !hasMoved) {//move

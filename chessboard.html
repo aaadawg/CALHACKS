@@ -89,8 +89,10 @@
                 var move_status = canMove(selectedPiece, src, dest);
                 if (move_status !== -1) { // we are at least moving
                     // Create New Board Object
-                    board[dest[0]][dest[1]] = selectedPiece;
-                    board[src[0]][src[1]] = null;
+                    if (!hasMoved) {
+                        board[dest[0]][dest[1]] = selectedPiece;
+                        board[src[0]][src[1]] = null;
+                    }
                     if (move_status === 1) { //capture
                         board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
                         src = dest;

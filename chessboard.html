@@ -25,7 +25,7 @@
 
   <body>
 
-
+    <!-- Checkers Table -->
     <table id="chess_board" cellpadding="0" cellspacing="0">
     </table>
 
@@ -35,49 +35,66 @@
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">
-    </script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
     <!-- JQuery selectors -->
     <script>
-        $(".location").on("click", function() {
-            var locationID = $(this).attr('id').split("-"); // [x, y]
-            var hasPiece = $(this).attr('hasPiece');
 
+        var board;
 
-        })
-        $('#chess_board').on("click", function() {
-            sweetAlert("Oops...", "Something went wrong!", "error");
-        });
-    </script>
-
-    <script>
-    function drawboard(board) {
-        for (var i = 0; i < board.length; i++) {
-            $("#chess_board").append("<tr id='row" + i + "'>");
-            for (var j = 0; j < board[i].length; j++) {
-                var elem = board[i][j];
-                console.log(elem);
-                if (elem == null) {
-                    $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
-                } else {
-                    $("#row" + i).append("<td hasPiece='true' id='" + i + "-" + j + "'><a href='#' class='location pawn " + elem.team + "'>&#9823;</a></td>");
-                }   
+        function drawboard(board) {
+            $("#chess_board").empty();
+            for (var i = 0; i < board.length; i++) {
+                $("#chess_board").append("<tr id='row" + i + "'>");
+                for (var j = 0; j < board[i].length; j++) {
+                    var elem = board[i][j];
+                    if (elem == null) {
+                        $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
+                    } else {
+                        $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9823;</a></td>");
+                    }   
+                }
+                $("#chess_board").append("</tr>");
             }
-            $("#chess_board").append("</tr>");
         }
-    }
-    </script>
 
-    <!-- Socket Script -->
-    <script>
         var socket = io();
-        console.log("woo");
 
         socket.on('board', function(res) {
-            var board = JSON.parse(res);
+            board = JSON.parse(res);
             drawboard(board);
         })
+
+
+        var selectedPiece;
+        var src;
+        var hasSelectedPiece = false;
+
+        $('table').on("click", ".location",function() {
+
+            if (!hasSelectedPiece) { // Selecting a piece
+
+                src = $(this).attr('id').split("-"); // [x, y]
+                var hasPiece = $(this).attr('hasPiece');
+                if (hasPiece === "true") {
+                    selectedPiece = board[src[0]][src[1]]; // Get Piece from Board
+                }
+                hasSelectedPiece = true;
+
+            } else { // Executing a move
+
+                hasSelectedPiece = false;
+                var dest = $(this).attr('id').split("-");
+
+                // Create New Board Object
+                board[dest[0]][dest[1]] = selectedPiece;
+                board[src[0]][src[1]] = null;
+                drawboard(board);
+
+            }
+
+        });
+
     </script>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->

@@ -28,6 +28,8 @@
     <!-- Checkers Table -->
     <table id="chess_board" cellpadding="0" cellspacing="0"></table>
 
+    <p id='whosTurn'></p>
+
     <!-- Socket.io for messaging -->
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="js/sweetalert.min.js"></script>
@@ -64,6 +66,7 @@
 
         socket.on('startGame', function(firstTurn) {
             turn = firstTurn;
+            $("#whosTurn").html(turn);
         })
 
         /* Making a selection or move */

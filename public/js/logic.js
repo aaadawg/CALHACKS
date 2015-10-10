@@ -1,3 +1,19 @@
+function drawboard(board) {
+    $("#chess_board").empty();
+    for (var i = 0; i < board.length; i++) {
+        $("#chess_board").append("<tr id='row" + i + "'>");
+        for (var j = 0; j < board[i].length; j++) {
+            var elem = board[i][j];
+            if (elem == null) {
+                $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
+            } else {
+                $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9823;</a></td>");
+            }   
+        }
+        $("#chess_board").append("</tr>");
+    }
+}
+
 function canSelect(piece) {
 	if (piece == null || turn !== player) {
 		return false;
@@ -5,11 +21,10 @@ function canSelect(piece) {
 	if (piece.team === player && !hasMoved) {
 		return true;
 	}
-	return false;
 }
 
-function canMove(piece, src, dest) {
-	if (hasSelectedPiece) {
+function canMove(piece, src, dst) {
+	if (pieceSelected) {
 		var diffX = Math.abs(src[0] - dest[0]);
 		var diffY = Math.abs(src[1] - dest[1]);
 		var product = diffX * diffY;
@@ -46,4 +61,9 @@ function canMove(piece, src, dest) {
 	return -1; // can't move
 }
 
-//global booleans: pieceSelected, hasMoved
+function endTurn() {
+	hasSelectedPiece = false;
+	hasMoved = false;
+	selectedPiece = null;
+	src = null;
+}

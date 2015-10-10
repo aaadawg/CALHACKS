@@ -73,16 +73,14 @@
         /* Making a selection or move */
         $('table').on("click", ".location",function() {
 
-            if (!hasSelectedPiece && !hasMoved) { // Selecting a piece
+            var hasPiece = $(this).attr('hasPiece');
+
+            if (hasPiece === "true" && !hasMoved) { // Selecting a piece
                 src = $(this).attr('id').split("-"); // [x, y]
                 src = [parseInt(src[0]), parseInt(src[1])];
                 var hasPiece = $(this).attr('hasPiece');
                 var potentialPiece = board[src[0]][src[1]]; // we don't know if we can select this piece
-                console.log(hasPiece);
-                console.log(potentialPiece);
-                console.log(turn);
                 if (hasPiece === "true" && canSelect(potentialPiece)) {
-                    console.log("SELECTED");
                     selectedPiece = potentialPiece; // Get Piece from Board
                     hasSelectedPiece = true;
                 }

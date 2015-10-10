@@ -39,7 +39,6 @@ function createBoard() {
 			[createPiece("black", [8, 0]), null, createPiece("black", [8, 2]), null, null, null, null, null, null, null, null, null, createPiece("white", [8, 12]), null,],
 			[null, createPiece("black", [9, 0]), null, null, null, null, null, null, null, null, null, createPiece("white", [9, 11]), null, createPiece("white", [9, 13]),],
 			[createPiece("black", [10, 0]), null, createPiece("black", [10, 2]), null, null, null, null, null, null, null, null, null, createPiece("white", [10, 12]), null,],
-			[null, null, null, null, null, null, null, null, null, null, null, null, null, null,],
 			[null, null, null, createPiece("gold", [11, 3]), null, createPiece("gold", [10, 5]), null, createPiece("gold", [10, 7]), null, createPiece("gold", [10, 9]), null, null, null, null,],
 			[null, null, null, null, createPiece("gold", [12, 4]), null, createPiece("gold", [12, 6]), null, createPiece("gold", [12, 8]), null, createPiece("gold", [12, 10]), null, null, null,],
 			[null, null, null, createPiece("gold", [13, 3]), null, createPiece("gold", [13, 5]), null, createPiece("gold", [13, 7]), null, createPiece("gold", [13, 9]), null, null, null, null,]];

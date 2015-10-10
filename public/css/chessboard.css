@@ -30,3 +30,27 @@ a {
 	-moz-box-shadow:inset 0 0 10px rgba(0,0,0,.4);
 	-webkit-box-shadow:inset 0 0 10px rgba(0,0,0,.4);
 }
+.blue {
+	color: #003262;
+}
+a.blue:hover {
+	color: #003262;
+}
+.gold {
+	color: #FDB515
+}
+a.gold:hover {
+	color: #FDB515;
+}
+.white {
+	color: #999999;
+}
+a.white:hover {
+	color: #999999
+}
+.red {
+	color: #A60000;
+}
+a.red:hover {
+	color: #A60000;
+}

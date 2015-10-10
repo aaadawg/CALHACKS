@@ -7,7 +7,7 @@ function drawboard(board) {
             if (elem == null) {
                 $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
             } else if (!elem.isKing) {
-                $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9823;</a></td>");
+                $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9762;</a></td>");
             } else {
             	$("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9812;</a></td>");
             }

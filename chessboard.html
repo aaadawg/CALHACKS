@@ -11,8 +11,9 @@
     <title>CALHACKS Checkers</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/chessboard.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet"> <!-- Bootstrap -->
+    <link href="css/chessboard.css" rel="stylesheet"> <!-- Chessboard -->
+    <link rel="stylesheet" type="text/css" href="css/sweetalert.css"> <!-- SweetAlertJS -->
 
     <!-- Padding for navbar -->
     <style>
@@ -26,7 +27,7 @@
 
 
     <table id="chess_board" cellpadding="0" cellspacing="0">
-        <tr>
+        <!-- <tr>
             <td id="A8"><a href="#" class="rook black">&#9820;</a></td>
             <td id="B8"><a href="#" class="night black">&#9822;</a></td>
             <td id="C8"><a href="#" class="bishop black">&#9821;</a></td>
@@ -105,15 +106,23 @@
             <td id="F1"><a href="#" class="bishop white">&#9815;</a></td>
             <td id="G1"><a href="#" class="night white">&#9816;</a></td>
             <td id="H1"><a href="#" class="rook white">&#9814;</a></td>
-        </tr>
+        </tr> -->
     </table>
 
     <!-- Socket.io for messaging -->
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="js/sweetalert.min.js"></script>
     
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js">
+    </script>
+
+    <script>
+        $('#chess_board').on("click", function() {
+            sweetAlert("Oops...", "Something went wrong!", "error");
+        });
+    </script>
 
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="/js/bootstrap.min.js"></script>

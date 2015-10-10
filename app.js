@@ -37,8 +37,8 @@ app.get('/', function(req, res) {
  **************/
 var numberOfClients = 0;
 var board = createBoard();
-var players = ['black', 'white', 'gold', 'blue'];
-var availablePlayers = ['black', 'white', 'gold', 'blue'];
+var players = ['red', 'white', 'gold', 'blue'];
+var availablePlayers = ['red', 'white', 'gold', 'blue'];
 var socketIDToColor = {};
 var socketIDToSocket = {}
 var turnCounter = 0;
@@ -59,14 +59,14 @@ function createPiece(team) {
 function createBoard() {
 	return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
 			[null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
-			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
 			[null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
 			[null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
 }

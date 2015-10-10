@@ -17,12 +17,12 @@ function drawboard(board) {
 
 
 function canSelect(piece) {
-	if (piece == null || turn !== player) {
-		return false;
+	if (piece != null && piece.team == player) {
+		if (!hasMoved) {
+			return true;
+		}
 	}
-	if (piece.team === player && !hasMoved) {
-		return true;
-	}
+	return false;
 }
 
 function canMove(piece, src, dest) {
@@ -39,7 +39,7 @@ function canMove(piece, src, dest) {
 					if (enemyPiece != null && enemyPiece.team != player) {//enemyPiece on different team
 						return 1; // move is a capture
 					}
-				} else {
+				} else if (!hasMoved) {
 					return 0; // move is not a capture
 				}
 			} else if (!piece.isKing || (piece.isKing && product === 0)) {
@@ -54,7 +54,7 @@ function canMove(piece, src, dest) {
 						if (enemyPiece != null && enemyPiece.team != player) {//enemyPiece on different team
 							return 1; // move is a capture;
 						}
-					} else {
+					} else if (!hasMoved) {
 						return 0; // move is not a capture
 					}
 				}
@@ -72,8 +72,19 @@ function endTurn() {
 }
 
 function canKing(piece, location) {
-	if ((piece.team == "gold" && location[1] == 0) || (piece.team == "blue" && location[1] == 11) || (piece.team == "red" && location[0] == 11) || (piece.team == "white" && location[0] == 0)) {
+	if (piece.team == "gold" && location[1] == 0) {
 		return true;
+	} else if (piece.team == "blue" && location[1] == 11) {
+		return true;
+	} else if (piece.team == "red" && location[0] == 11) {
+		return true;
+	} else if (piece.team == "white" && location[0] == 0) {
+		return true;
+	} else {
+		return false;
 	}
-	return false;
+}
+
+function getPiece(board, src) {
+	return board[src[0]][src[1]];
 }

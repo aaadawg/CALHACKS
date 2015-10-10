@@ -11,8 +11,13 @@ function drawboard(board) {
             }   
         }
         $("#chess_board").append("</tr>");
+
+        }
+    }
+
     }
 }
+
 
 function canSelect(piece) {
 	if (piece == null || turn !== player) {
@@ -24,7 +29,8 @@ function canSelect(piece) {
 }
 
 function canMove(piece, src, dst) {
-	if (pieceSelected) {
+
+	if (hasSelectedPiece) {
 		var diffX = Math.abs(src[0] - dest[0]);
 		var diffY = Math.abs(src[1] - dest[1]);
 		var product = diffX * diffY;

@@ -47,7 +47,7 @@ var turn = players[turnCounter % 4];
 
 
 /* Create a new piece object */
-function createPiece(team, position) {
+function createPiece(team) {
 	piece = new Object();
 	piece.team = team;
 	piece.isKing = false;
@@ -57,18 +57,18 @@ function createPiece(team, position) {
 // COME BACK AND REMOVE POSITIONS
 // Creates Initial Board
 function createBoard() {
-	return [[null, null, null, createPiece("blue", [2, 4]), null, createPiece("blue", [2, 6]), null, createPiece("blue", [2, 8]), null, createPiece("blue", [2, 10]), null, null],
-			[null, null, createPiece("blue", [1, 3]), null, createPiece("blue", [1, 5]), null, createPiece("blue", [1, 7]), null, createPiece("blue", [1, 9]), null, null, null],
-			[createPiece("black", [3, 1]), null, null, null, null, null, null, null, null, null, createPiece("white", [3, 11]), null],
-			[null, createPiece("black", [4, 2]), null, null, null, null, null, null, null, null, null, createPiece("white", [4, 12])],
-			[createPiece("black", [5, 1]), null, null, null, null, null, null, null, null, null, createPiece("white", [5, 11]), null],
-			[null, createPiece("black", [6, 2]), null, null, null, null, null, null, null, null, null, createPiece("white", [6, 12])],
-			[createPiece("black", [7, 0]), null, null, null, null, null, null, null, null, null, createPiece("white", [7, 11]), null],
-			[null, createPiece("black", [8, 2]), null, null, null, null, null, null, null, null, null, createPiece("white", [8, 12])],
-			[createPiece("black", [9, 0]), null, null, null, null, null, null, null, null, null, createPiece("white", [9, 11]), null],
-			[null, createPiece("black", [10, 2]), null, null, null, null, null, null, null, null, null, createPiece("white", [10, 12])],
-			[null, null, null, createPiece("gold", [12, 4]), null, createPiece("gold", [12, 6]), null, createPiece("gold", [12, 8]), null, createPiece("gold", [12, 10]), null, null],
-			[null, null, createPiece("gold", [11, 3]), null, createPiece("gold", [10, 5]), null, createPiece("gold", [10, 7]), null, createPiece("gold", [10, 9]), null, null, null]];
+	return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
+			[null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
+			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+			[null, createPiece("black"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+			[null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
+			[null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
 }
 
 /*************************

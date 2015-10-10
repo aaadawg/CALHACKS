@@ -71,6 +71,7 @@
 
             if (!hasSelectedPiece && !hasMoved) { // Selecting a piece
                 src = $(this).attr('id').split("-"); // [x, y]
+                src = [parseInt(src[0]), parseInt(src[1])];
                 var hasPiece = $(this).attr('hasPiece');
                 var potentialPiece = board[src[0]][src[1]]; // we don't know if we can select this piece
                 console.log(hasPiece);
@@ -84,6 +85,7 @@
 
             } else { // Executing a move
                 var dest = $(this).attr('id').split("-");
+                dest = [parseInt(dest[0]), parseInt(dest[1])];
                 var move_status = canMove(selectedPiece, src, dest);
                 if (move_status !== -1) { // we are at least moving
                     // Create New Board Object

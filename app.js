@@ -22,7 +22,11 @@ app.get('/', function(req, res) {
 /**************
  * Game Logic *
  **************/
+var numberOfClients = 0;
 var board = createBoard();
+var availablePlayers = ['black', 'white', 'gold', 'blue'];
+var activePlayers = []
+
 
 /* Create a new piece object */
 function createPiece(team, position) {
@@ -51,9 +55,25 @@ function createBoard() {
 
 
 io.on('connection', function(socket) {
+	
+	numberOfClients++;
 
-	console.log("A user has connected");
+	if (numberOfClients == 4) {
+		io.emit('startGame', "gold");
+	}
 
-	io.emit('board', JSON.stringify(board));
+	// If a player disconnects
+	socket.on('disconnect', function() {
+		numberOfClients--;
+	});
 
+	socket.on('moved', function(msg) {
+		var newGameState = JSON.parse(msg);
+	})
+
+	playerForSocket = availablePlayers.pop(); // Choose an available player
+	activePlayers.push(playerForSocket); // Add to avtive players
+	socket.emit('player', playerForSocket); // Send to client
+	io.emit('board', JSON.stringify(board)); // Send new board to all sockets
+	
 });

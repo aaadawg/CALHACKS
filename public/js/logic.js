@@ -5,10 +5,11 @@ function canSelect(piece) {
 	if (piece.team === player && !hasMoved) {
 		return true;
 	}
+	return false;
 }
 
-function canMove(piece, src, dst) {
-	if (pieceSelected) {
+function canMove(piece, src, dest) {
+	if (hasSelectedPiece) {
 		var diffX = Math.abs(src[0] - dest[0]);
 		var diffY = Math.abs(src[1] - dest[1]);
 		var product = diffX * diffY;

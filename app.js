@@ -1,3 +1,16 @@
+/*************************************************************************
+ * Laucity
+ *
+ *************************************************************************
+ *
+ * @description Server logic
+ * 
+ * 
+ * @author Rohit Lalchandani, Anish Balaji, Pranay Kumar, Brennen Nelson
+ * 
+ *
+ *************************************************************************/
+
 
 /*************************
  * Creates a web <server *
@@ -24,8 +37,11 @@ app.get('/', function(req, res) {
  **************/
 var numberOfClients = 0;
 var board = createBoard();
+var players = ['black', 'white', 'gold', 'blue'];
 var availablePlayers = ['black', 'white', 'gold', 'blue'];
-var activePlayers = []
+var socketIDToColor = {};
+var socketIDToSocket = {}
+var turn = players[0];
 
 
 /* Create a new piece object */
@@ -58,22 +74,28 @@ io.on('connection', function(socket) {
 	
 	numberOfClients++;
 
+	/* Send initial data to client */
+	colorForSocket = availablePlayers.pop(); // Choose an available player
+	socketIDToColor[socket.id] = playerForSocket; // Add to dictionary
+	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
+	socket.emit('player', colorForSocket); // Send to client
+	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
+
 	if (numberOfClients == 4) {
-		io.emit('startGame', "gold");
+		io.emit('startGame', turn);
 	}
 
-	// If a player disconnects
+	/* If a player disconnects */
 	socket.on('disconnect', function() {
+		disconnectedColor = socketIDToColor[socket.id];
+		availablePlayers.push(disconnectedColor);
+		delete socketIDToColor[socket.id];
 		numberOfClients--;
 	});
 
-	socket.on('moved', function(msg) {
+	socket.on('endTurn', function(msg) {
 		var newGameState = JSON.parse(msg);
-	})
 
-	playerForSocket = availablePlayers.pop(); // Choose an available player
-	activePlayers.push(playerForSocket); // Add to avtive players
-	socket.emit('player', playerForSocket); // Send to client
-	io.emit('board', JSON.stringify(board)); // Send new board to all sockets
+	})
 	
 });

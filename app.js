@@ -78,7 +78,7 @@ io.on('connection', function(socket) {
 
 	/* Send initial data to client */
 	colorForSocket = availablePlayers.pop(); // Choose an available player
-	socketIDToColor[socket.id] = playerForSocket; // Add to dictionary
+	socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
 	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
 	socket.emit('player', colorForSocket); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets

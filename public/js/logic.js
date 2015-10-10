@@ -6,9 +6,11 @@ function drawboard(board) {
             var elem = board[i][j];
             if (elem == null) {
                 $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
-            } else {
+            } else if (!elem.isKing) {
                 $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9823;</a></td>");
-            }   
+            } else {
+            	$("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9812;</a></td>");
+            }
         }
         $("#chess_board").append("</tr>");
 

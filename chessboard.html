@@ -45,22 +45,6 @@
         var player; // Which player you are
         var turn; // Who turn it is
 
-        function drawboard(board) {
-            $("#chess_board").empty();
-            for (var i = 0; i < board.length; i++) {
-                $("#chess_board").append("<tr id='row" + i + "'>");
-                for (var j = 0; j < board[i].length; j++) {
-                    var elem = board[i][j];
-                    if (elem == null) {
-                        $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
-                    } else {
-                        $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9823;</a></td>");
-                    }   
-                }
-                $("#chess_board").append("</tr>");
-            }
-        }
-
         var socket = io(); // Create a new socket for this user
 
         // Recieving board from server
@@ -98,7 +82,7 @@
                         board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
                     }
                     if (move_status === 0) {
-                        hasSelectedPiece = false;
+                        hasSelectedPiece = false; //turn has to be over
                     }
                     drawboard(board);
                     hasMoved = true;

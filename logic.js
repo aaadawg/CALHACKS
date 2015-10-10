@@ -61,4 +61,9 @@ function canMove(piece, src, dst) {
 	return -1; // can't move
 }
 
-//global booleans: pieceSelected, hasMoved
+function endTurn() {
+	hasSelectedPiece = false;
+	hasMoved = false;
+	selectedPiece = null;
+	src = null;
+}

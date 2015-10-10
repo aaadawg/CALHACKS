@@ -18,8 +18,10 @@ function canMove(piece, src, dst) {
 				if (product === 4)  { //capture diagonal
 					var enemyPiece = board[(src[0] + dest[0])/2][(src[1] + dest[1])/2];
 					if (enemyPiece !== null && enemyPiece.team != player) {//enemyPiece on different team
-						return true;
+						return 1; // move is a capture
 					}
+				} else {
+					return 0; // move is not a capture
 				}
 			} else if (!piece.isKing || (piece.isKing && product === 0)) {
 				if (sum <= 2 && product === 0) { //move or jump
@@ -31,14 +33,16 @@ function canMove(piece, src, dst) {
 							enemyPiece = board[(src[0] + dest[0])/2][dest[1]];
 						}
 						if (enemyPiece !== null && enemyPiece.team != player) {//enemyPiece on different team
-							return true;
+							return 1; // move is a capture;
 						}
+					} else {
+						return 0; // move is not a capture
 					}
 				}
 			}
 		}
 	}
-	return false;
+	return -1; // can't move
 }
 
 //global booleans: pieceSelected, hasMoved

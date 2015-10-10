@@ -18,16 +18,29 @@ app.get('/', function(req, res) {
 
 });
 
-function drawboard(board) {
-	for (var i = 0; i < board.length; i++) {
-		$("#chess_board").append("<tr>");
-		for (var j = 0; j < board[i].length; j++) {
-			if (elem == null) {
-				$("#chess_board").append("<td class='location' id=" + i + "-" + j "></td>");
-			} else {
-				$("#chess_board").append("<td id=" + i + "-" + j " class='location pawn " + " " + elem.team ">&#9823; </td>");
-			}	
-		}
-		$("#chess_board").append("</tr>");
-	}
+/* Create a new piece object */
+function createPiece(team, position) {
+	piece = new Object();
+	piece.team = team;
+	piece.position = position;
+	piece.isKing = false;
+	return piece;
+}
+
+function createBoard() {
+	return [[null, null, null, null, createPiece("blue", [0, 4]), null, createPiece("blue", [0, 6]), null, createPiece("blue", [0, 8]), null, createPiece("blue", [0, 10]), null, null, null,], 
+			[null, null, null, createPiece("blue", [1, 3]), null, createPiece("blue", [1, 5]), null, createPiece("blue", [1, 7]), null, createPiece("blue", [1, 9]), null, null, null, null,],
+			[null, null, null, null, createPiece("blue", [2, 4]), null, createPiece("blue", [2, 6]), null, createPiece("blue", [2, 8]), null, createPiece("blue", [2, 10]), null, null, null,],
+			[null, createPiece("black", [3, 1]), null, null, null, null, null, null, null, null, null, null, null, null,],
+			[createPiece("black", [4, 0]), null, createPiece("black", [4, 2]), null, null, null, null, null, null, null, null, null, null, null,],
+			[null, createPiece("black", [5, 1]), null, null, null, null, null, null, null, null, null, null, null, null,],
+			[createPiece("black", [6, 0]), null, createPiece("black", [6, 2]), null, null, null, null, null, null, null, null, null, null, null,],
+			[null, createPiece("black", [7, 0]), null, null, null, null, null, null, null, null, null, null, null, null,],
+			[createPiece("black", [8, 0]), null, createPiece("black", [8, 2]), null, null, null, null, null, null, null, null, null, null, null,],
+			[null, createPiece("black", [9, 0]), null, null, null, null, null, null, null, null, null, null, null, null,],
+			[createPiece("black", [10, 0]), null, createPiece("black", [10, 2]), null, null, null, null, null, null, null, null, null, null, null,],
+			[null, null, null, null, null, null, null, null, null, null, null, null, null, null,],
+			[null, null, null, null, null, null, null, null, null, null, null, null, null, null,],
+			[null, null, null, null, null, null, null, null, null, null, null, null, null, null,],
+			[null, null, null, null, null, null, null, null, null, null, null, null, null, null,]];
 }

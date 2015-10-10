@@ -97,6 +97,9 @@
                     if (move_status === 1) {
                         board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
                     }
+                    if (move_status === 0) {
+                        hasSelectedPiece = false;
+                    }
                     drawboard(board);
                     hasMoved = true;
                 }

@@ -1,3 +1,19 @@
+function drawboard(board) {
+    $("#chess_board").empty();
+    for (var i = 0; i < board.length; i++) {
+        $("#chess_board").append("<tr id='row" + i + "'>");
+        for (var j = 0; j < board[i].length; j++) {
+            var elem = board[i][j];
+            if (elem == null) {
+                $("#row" + i).append("<td hasPiece='false' class='location' id=" + i + "-" + j + "></td>");
+            } else {
+                $("#row" + i).append("<td hasPiece='true' class='location' id='" + i + "-" + j + "'><a href='#' class='pawn " + elem.team + "'>&#9823;</a></td>");
+            }   
+        }
+        $("#chess_board").append("</tr>");
+        }
+    }
+
 function canSelect(piece) {
 	if (piece == null || turn !== player) {
 		return false;

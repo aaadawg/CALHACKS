@@ -16,39 +16,42 @@ html(lang='en')
 
   body
     // Main container
-    .container
+    .container-fluid
       .row
-        .col-md-7
+        .col-md-6
           table#gameBoard(cellpadding='0', cellspacing='0')
-        .col-md-5
-          .row.messagesRow0
-            .col-sm-9
-              h4 Message Feed            
-            .col-sm-3
-              button#clearButton.btn.btn-warning.btn-sm(type='button') Clear Message History
+        .col-md-6
+          .col-sm-1
+          .col-sm-8
+            .row.messagesRow0
+              .col-sm-12
+                h4 Message Feed
 
-          table.table.table-striped.messagesRow0
-            thead
-              tr
-                th User              
-                th Message     
-            tbody#messages
-         
-          .row.messagesRow0
-            .col-sm-10
-              input#m.form-control(type='text', autofocus='', placeholder='Send a message') 
-            .col-sm-2
-              button#submitbtn.btn.btn-primary(type='submit') Send Message
+            .row.scrollableTable
+              table.table.table-striped.messagesRow0
+                thead
+                  tr
+                    th User              
+                    th Message     
+                tbody#messages
 
-          .row.messagesRow1
-            .col-sm-12   
-              h3#whosTurn
-          .row
-            .col-sm-12.messagesRow1
-              h3#whoYouAre
-          .row
-            .col-sm-12.messagesRow2
-              h3#yourPoints
+            br
+           
+            .row.messagesRow0
+              .col-sm-7
+                input#m.form-control(type='text', autofocus='', placeholder='Send a message') 
+              .col-sm-3
+                button#submitbtn.btn.btn-primary(type='submit') Send Message
+
+            .row.messagesRow1
+              .col-sm-12   
+                h3#whosTurn
+            .row
+              .col-sm-12.messagesRow1
+                h3#whoYouAre
+            .row
+              .col-sm-12.messagesRow2
+                h3#yourPoints
 
     script(src='https://cdn.socket.io/socket.io-1.2.0.js')
     script(src='js/sweetalert.min.js')
@@ -70,6 +73,7 @@ html(lang='en')
       setTimeout(function() { $('.messagesRow2').show(); $('.messagesRow2').jAnimate('fadeInRight'); }, 300);
 
     script.
+
       var board; // JS Object representing board
       var hasMoved = false; // If you have moved
       var player; // Which player you are
@@ -114,6 +118,7 @@ html(lang='en')
       socket.on('chat message', function(response) {
         var messagePacket = JSON.parse(response);
         $('#messages').append("<tr><th>" + messagePacket.username + "</th><td style='word-break:break-all;'>" + messagePacket.msg + "</td></tr>");
+        $('.scrollableTable').animate({ scrollTop:  $('.scrollableTable').scrollTop() + 250 }, 'slow');
       });
 
       /* Event Listener for clear button */

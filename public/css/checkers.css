@@ -2,12 +2,12 @@ a {
 	color:#000;
 	display:block;
 	font-size:40px;
-	height:50px;
+	height:55px;
 	position:relative;
 	text-decoration:none;
 	text-shadow:0 1px #fff;
 	text-align: center;
-	width:50px;
+	width:55px;
 }
 #gameBoard { border:5px solid #333; }
 #gameBoard td {
@@ -17,10 +17,10 @@ a {
 	box-shadow:inset 0 0 0 1px #fff;
 	-moz-box-shadow:inset 0 0 0 1px #fff;
 	-webkit-box-shadow:inset 0 0 0 1px #fff;
-	height:50px;
+	height:55px;
 	text-align:center;
 	vertical-align:middle;
-	width:50px;
+	width:55px;
 }
 #gameBoard tr:nth-child(odd) td:nth-child(even),
 #gameBoard tr:nth-child(even) td:nth-child(odd) {
@@ -59,4 +59,9 @@ a.red:hover {
 
 body { 
     padding-top: 65px; 
+}
+
+.scrollableTable {
+	max-height: 300px;
+	overflow: auto;
 }

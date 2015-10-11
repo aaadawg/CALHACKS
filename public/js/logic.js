@@ -104,17 +104,10 @@ function endTurn() {
 }
 
 function canKing(piece, location) {
-	if (piece.team == "gold" && location[0] == 0) {
+	if (location[0] == 0) {
 		return true;
-	} else if (piece.team == "blue" && location[0] == 11) {
-		return true;
-	} else if (piece.team == "red" && location[1] == 11) {
-		return true;
-	} else if (piece.team == "white" && location[1] == 0) {
-		return true;
-	} else {
-		return false;
 	}
+	return false;
 }
 
 function getPiece(board, src) {
@@ -122,27 +115,11 @@ function getPiece(board, src) {
 }
 
 function movedBackwards(piece, src, dest) {
+	var zeroDiff = dest[0] - src[0];
 	if (piece.isKing) {
 		return true;
+	} else if (zeroDiff == 1 || zeroDiff == 2) {
+		return true;
 	}
-	var zeroDiff = dest[0] - src[0];
-	var oneDiff = dest[1] - src[1];
-	if (piece.team == "gold") {
-		if (zeroDiff == 1 || zeroDiff == 2) {
-			return true;
-		}
-	} else if (piece.team == "blue") {
-		if (zeroDiff == -1 || zeroDiff == -2) {
-			return true;
-		}
-	} else if (piece.team == "white") {
-		if (oneDiff == 1 || oneDiff == 2) {
-			return true;
-		}
-	} else if (piece.team == "red") {
-		if (oneDiff == -1 || oneDiff == -2) {
-			return true;
-		}
-	} 
 	return false;
 }

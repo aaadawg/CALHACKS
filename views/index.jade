@@ -77,7 +77,7 @@ html(lang='en')
       var board; // JS Object representing board
       var hasMoved = false; // If you have moved
       var player; // Which player you are
-      var turn; // Who turn it is
+      var turn; // WHO turn it is
       var playerPoints;
       var selectedPiece; // JS Object of selected
       var src; // Coordinates of selected piece
@@ -103,6 +103,7 @@ html(lang='en')
 
       socket.on('startGame', function(firstTurn, points) {
         turn = firstTurn;
+        console.log(turn);
         playerPoints = points;
         $("#whosTurn").html("It is player " + turn + "'s turn.");
       });
@@ -158,7 +159,7 @@ html(lang='en')
           src = tempSrc;
           selectedPiece = pieceAtSpot; // Get Piece from Board
           hasSelectedPiece = true;
-        } else { // Executing a move
+        } else if (hasSelectedPiece) { // Executing a move
 
           var dest = tempSrc;
           var move_status = canMove(selectedPiece, src, dest);

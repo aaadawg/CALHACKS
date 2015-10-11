@@ -28,6 +28,60 @@
     <!-- Checkers Table -->
     <table id="chess_board" cellpadding="0" cellspacing="0"></table>
 
+    <!-- Messages Container -->
+    <div class="container">
+      <div class="jumbotron">
+
+          <!-- Row 1 -->
+          <div class="row">
+            <div class="col-md-10">
+              <h4>Message Feed</h4>
+            </div>
+            <div class="col-md-2">
+              <button type="button" id="clearButton" class="btn btn-warning btn-sm">Clear Message History</button>
+            </div>
+          </div>
+
+          <!-- Messages Table -->
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody id="messages"></tbody>
+          </table>
+
+      </div> <!--/jumbotron-->
+    </div><!--/container -->
+
+    <!-- Messages Input -->
+    <div class="container">
+
+      <!-- Message Form -->
+      <div class="row">
+        <div class="col-md-10">
+            <input type="text" id="m" class="form-control" autofocus placeholder="Send a message">
+        </div>
+        <div class="col-md-2">
+          <button type="submit" id="submitbtn" class="btn btn-primary">Send Message</button>
+        </div>
+      </div><!-- /row -->
+
+      <br>
+
+      <!-- Username Form -->
+      <div class="row">
+        <div class="col-md-10">
+            <input type="text" id="username" class="form-control" placeholder="Enter username (default: anonymous)">
+        </div>
+        <div class="col-md-2">
+          <span class="badge" id='usersOnline'></span>
+        </div>
+      </div><!-- /row -->
+    </div>
+
     <p id='whosTurn' style='font-size: 30px'></p>
     <p id='whoYouAre' style='font-size: 30px'></p>
 
@@ -56,19 +110,64 @@
 
         // Recieving board from server
         socket.on('board', function(boardJSON) {
-            board = JSON.parse(boardJSON);
-            drawboard(board);
+          board = JSON.parse(boardJSON);
+          drawboard(board);
         });
 
         socket.on('player', function(playerType) {
-            player = playerType;
-            $("#whoYouAre").html("You are player " + player);
+          player = playerType;
+          $("#whoYouAre").html("You are player " + player);
         });
 
         socket.on('startGame', function(firstTurn) {
-            turn = firstTurn;
-            $("#whosTurn").html("It is player " + turn + "'s turn.");
+          turn = firstTurn;
+          $("#whosTurn").html("It is player " + turn + "'s turn.");
         })
+
+        /******************
+         * Messaging code *
+         ******************/
+        /* Sends the message in the message input box to the server */
+        function sendMessage() {
+          if ($('#username').val() == "") {
+            var user = "anonymous";
+          } else {
+            var user = $('#username').val();
+          }
+
+          var messagePacket = {msg: $('#m').val(), username: user};
+          socket.emit('chat message', JSON.stringify(messagePacket));
+          $('#m').val('');
+        }
+
+        /* Socket listener for incoming message */
+        socket.on('chat message', function(response) {
+          var messagePacket = JSON.parse(response);
+          $('#messages').append("<tr><th>" + messagePacket.username + "</th><td style='word-break:break-all;'>" + messagePacket.msg + "</td></tr>");
+        });
+
+        /* Event Listener for clear button */
+        $('#clearButton').click(function (e) {
+          $('#messages').fadeOut(400, function() {
+            $('#messages').empty().fadeIn();
+          });
+        });
+
+        /* Event Listener for submit button */
+        $('#submitbtn').click(function(){
+          if ($('#m').val().trim() != "") {
+            sendMessage();
+          }
+        });
+
+        /* Event Listener for enter key to submit message */
+        $('#m').keypress(function (e) {
+          if (e.which == 13) {
+            if ($('#m').val().trim() != "") {
+              sendMessage();
+            }
+          }
+        });
 
         /* Making a selection or move */
         $('table').on("click", ".location",function() {

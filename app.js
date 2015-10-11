@@ -44,69 +44,73 @@ var socketIDToSocket = {}
 var turnCounter = 0;
 var turn = players[turnCounter % 4];
 
-
-
 /* Create a new piece object */
 function createPiece(team) {
-	piece = new Object();
-	piece.team = team;
-	piece.isKing = false;
-	return piece;
+    piece = new Object();
+    piece.team = team;
+    piece.isKing = false;
+    return piece;
 }
 
-// COME BACK AND REMOVE POSITIONS
-// Creates Initial Board
+/* Creates Initial Board */
 function createBoard() {
-	return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
-			[null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
-			[null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
+    return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
+            [null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
+            [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
 }
 
 /*************************
  * Socket.io Connections *
  *************************/
 io.on('connection', function(socket) {
-	
-	numberOfClients++;
+    
+    numberOfClients++;
 
-	/* Send initial data to client */
-	colorForSocket = availablePlayers.pop(); // Choose an available player
-	socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
-	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
-	socket.emit('player', colorForSocket); // Send to client
-	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
+    /* Send initial data to client */
+    colorForSocket = availablePlayers.pop(); // Choose an available player
+    socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
+    socketIDToSocket[socket.id] = socket; // Add to socket dictionary
+    socket.emit('player', colorForSocket); // Send to client
+    io.emit('board', JSON.stringify(board)); // Send current board to all sockets
 
-	if (numberOfClients == 4) {
-		io.emit('startGame', turn);
-	}
+    if (numberOfClients == 4) {
+        io.emit('startGame', turn);
+    }
 
-	/* If a player disconnects */
-	socket.on('disconnect', function() {
-		disconnectedColor = socketIDToColor[socket.id];
-		availablePlayers.push(disconnectedColor);
-		delete socketIDToColor[socket.id];
-		numberOfClients--;
-	});
+    /* If a player disconnects */
+    socket.on('disconnect', function() {
+        disconnectedColor = socketIDToColor[socket.id];
+        availablePlayers.push(disconnectedColor);
+        delete socketIDToColor[socket.id];
+        numberOfClients--;
+    });
 
-	socket.on('turnEnded', function(msg) {
-		var newGameState = JSON.parse(msg);
-		turnCounter++;
-		turn = players[turnCounter % 4];
-		io.emit('startGame', turn);
-	})
+    socket.on('turnEnded', function(msg) {
+        var newGameState = JSON.parse(msg);
+        turnCounter++;
+        turn = players[turnCounter % 4];
+        io.emit('startGame', turn);
+    })
 
-	socket.on('refreshBoard', function(JSONBoard) {
-		board = JSON.parse(JSONBoard);
-		io.emit('board', JSON.stringify(board));
-	})
-	
+    socket.on('refreshBoard', function(JSONBoard) {
+        board = JSON.parse(JSONBoard);
+        io.emit('board', JSON.stringify(board));
+    })
+
+
+    /* Messaging Client */
+     socket.on('chat message', function(msg){
+        console.log('message: ' + msg);
+        io.emit('chat message', msg);
+    });
+    
 });

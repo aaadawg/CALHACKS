@@ -56,7 +56,7 @@ function canMove(piece, src, dest) {
 	if (hasSelectedPiece) {
 		if (movedBackwards(piece, src, dest)) {
 			if (playerPoints < 1) {
-				return false;
+				return -1;
 			}
 		}
 		var diffX = Math.abs(src[0] - dest[0]);
@@ -125,8 +125,6 @@ function movedBackwards(piece, src, dest) {
 	if (piece.isKing) {
 		return true;
 	}
-	console.log("yo");
-	console.log(piece.team);
 	var zeroDiff = dest[0] - src[0];
 	var oneDiff = dest[1] - src[1];
 	if (piece.team == "gold") {
@@ -142,7 +140,6 @@ function movedBackwards(piece, src, dest) {
 			return true;
 		}
 	} else if (piece.team == "red") {
-		console.log("red");
 		if (oneDiff == -1 || oneDiff == -2) {
 			return true;
 		}

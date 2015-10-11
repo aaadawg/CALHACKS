@@ -65,3 +65,9 @@ body {
 	max-height: 300px;
 	overflow: auto;
 }
+
+.tabDiv {
+	max-height: 175px;
+	overflow: auto;
+	overflow-y: scroll;
+}

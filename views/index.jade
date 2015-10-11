@@ -22,7 +22,7 @@ html(lang='en')
           table#gameBoard(cellpadding='0', cellspacing='0')
         .col-md-6
           .col-sm-1
-          .col-sm-8
+          .col-sm-11
             .row.messagesRow0
               .col-sm-12
                 h4 Message Feed
@@ -47,22 +47,31 @@ html(lang='en')
             br
 
             .row
-              .col-sm-12
-                ul(class='nav nav-tabs')
+              .col-sm-6
+                ul(class='nav nav-pills' role='tablist')
                   li(class='active' role="presentation")
-                    a(data-toggle="tab") Game Information
+                    a(href="#info" role="tab" data-toggle="tab") Game Information
                   li(role="presentation")
-                    a(data-toggle="tab") Rules
+                    a(href="#rules" role="tab" data-toggle="tab" id="rulesTab") Rules
+            
+            br
 
-            .row.messagesRow1
-              .col-sm-12   
-                h3#whosTurn
-            .row
-              .col-sm-12.messagesRow1
-                h3#whoYouAre
-            .row
-              .col-sm-12.messagesRow2
-                h3#yourPoints
+            .tab-content(id="myTabContent")
+              div(class="tab-pane fade in active" id="info")
+                .panel.panel-default.tabDiv
+                  .panel-body
+                    h5#whosTurn
+                    h5#whoYouAre
+                    h5#yourPoints
+              div(class="tab-pane fade in" id="rules")
+                .panel.panel-default.tabDiv(id="rulesDiv")
+                  .panel-body
+                    p
+                      | Welcome to ______________________! </br></br>
+                      | You are probably wondering why you are here? We are also wondering the same thing. Well, now that we have you, I want to play a game... ;) </br></br>
+                      | In this game you will be be pitted against 3 other idiots in a battle of wits, skill, and assss. </br></br>
+                      | The rules are simple.. kinda: </br></br>
+                      | You are playing checkers but you can move and capture forward, left, right, and backward. However moving Backwards will cost you a swag point. You will notice the point tally in the box under the board. These are points that you will use to move a normal piece backwards. You start off with two but can gain more by capturing enemy pieces. Swag points will also break ties in the case of a stalemate. A stalemate occurs if no captures occur in 30 moves. If you move a piece to the other side of the board, that piece will be kinged and can also move and capture diagonally. Thats about it. Feel free to smack talk your oppenents, the more profane the better!
 
     script(src='https://cdn.socket.io/socket.io-1.2.0.js')
     script(src='js/sweetalert.min.js')
@@ -82,6 +91,10 @@ html(lang='en')
       $('.messagesRow0').jAnimate('fadeInRight');
       setTimeout(function() { $('.messagesRow1').show(); $('.messagesRow1').jAnimate('fadeInRight'); }, 200);
       setTimeout(function() { $('.messagesRow2').show(); $('.messagesRow2').jAnimate('fadeInRight'); }, 300);
+
+      $('#rulesTab').on('click', function() {
+        $('#rulesDiv').animate({ scrollTop:  $('#rulesDiv').scrollTop() + 220 }, 20000, "linear");
+      });
 
     script.
 
@@ -232,4 +245,4 @@ html(lang='en')
         }
       });
       
-    script(src='/js/bootstrap.min.js')
+    script(src='/js/bootstrap.js')

@@ -23,6 +23,8 @@ function canSelect(piece) {
 		if (!hasMoved) {
 			return true;
 		}
+	} else if (piece != null && piece.team != player && turn == player) {
+		sweetAlert("Oops...", "You clicked the wrong team's piece!", "error");
 	}
 	return false;
 }
@@ -30,6 +32,11 @@ function canSelect(piece) {
 function canMove(piece, src, dest) {
 
 	if (hasSelectedPiece) {
+		if (movedBackwards(piece, src, dest)) {
+			if (playerPoints < 1) {
+				return false;
+			}
+		}
 		var diffX = Math.abs(src[0] - dest[0]);
 		var diffY = Math.abs(src[1] - dest[1]);
 		var product = diffX * diffY;
@@ -71,6 +78,7 @@ function endTurn() {
 	hasMoved = false;
 	selectedPiece = null;
 	src = null;
+	moveKey = 0;
 }
 
 function canKing(piece, location) {
@@ -89,4 +97,23 @@ function canKing(piece, location) {
 
 function getPiece(board, src) {
 	return board[src[0]][src[1]];
+}
+
+function movedBackwards(piece, src, dest) {
+	if (piece.isKing) {
+		return true;
+	}
+	var zeroDiff = dest[0] - src[0];
+	var oneDiff = dest[1] - src[1];
+	if (piece.team == "gold") {
+		if (zeroDiff == 1 || zeroDiff == 2) return true;
+	} else if (piece.team == "blue") {
+		if (zeroDiff == -1 || zeroDiff == -2) return true;
+	} else if (piece.team == "white") {
+		if (oneDiff == 1 || oneDiff == 2) return true;
+	} else if (piece.team == "red") {
+		if (oneDiff == -1 || oneDiff == -2) return true;
+	} else {
+		return false;
+	}
 }

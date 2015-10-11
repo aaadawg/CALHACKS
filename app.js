@@ -35,12 +35,14 @@ app.get('/', function(req, res) {
 /**************
  * Game Logic *
  **************/
+var DEFAULT_POINTS = 2;
 var numberOfClients = 0;
 var board = createBoard();
 var players = ['red', 'white', 'gold', 'blue'];
 var availablePlayers = ['red', 'white', 'gold', 'blue'];
 var socketIDToColor = {};
 var socketIDToSocket = {}
+var colorToPoints = {};
 var turnCounter = 0;
 var turn = players[turnCounter % 4];
 
@@ -82,11 +84,12 @@ io.on('connection', function(socket) {
 	colorForSocket = availablePlayers.pop(); // Choose an available player
 	socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
 	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
-	socket.emit('player', colorForSocket); // Send to client
+	colorToPoints[colorForSocket] = DEFAULT_POINTS; //Every player gets 2 points to start
+	socket.emit('player', colorForSocket, colorToPoints[colorForSocket]); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
 
 	if (numberOfClients == 4) {
-		io.emit('startGame', turn);
+		io.emit('startGame', turn, colorToPoints[turn]);
 	}
 
 	/* If a player disconnects */
@@ -97,15 +100,24 @@ io.on('connection', function(socket) {
 		numberOfClients--;
 	});
 
+	//pointKey signifies what move took place
+	//0 --> normal move
+	// -1 --> nonKing backwards move
+	// 2 --> capture
+	// 3 --> kingCapture
+
 	socket.on('turnEnded', function(msg) {
 		var newGameState = JSON.parse(msg);
 		turnCounter++;
+		socket.emit('player', turn, colorToPoints[turn]);
 		turn = players[turnCounter % 4];
-		io.emit('startGame', turn);
+		io.emit('startGame', turn, colorToPoints[turn]);
 	})
 
-	socket.on('refreshBoard', function(JSONBoard) {
+	socket.on('refreshBoard', function(JSONBoard, pointKey) {
+		colorToPoints[turn] += pointKey;
 		board = JSON.parse(JSONBoard);
+		//socket.emit('player', turn, colorToPoints[turn]);
 		io.emit('board', JSON.stringify(board));
 	})
 	

@@ -30,6 +30,7 @@
 
     <p id='whosTurn' style='font-size: 30px'></p>
     <p id='whoYouAre' style='font-size: 30px'></p>
+    <p id='yourPoints' style='font-size: 30px'></p>
 
     <!-- Socket.io for messaging -->
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
@@ -47,6 +48,7 @@
         var hasMoved = false; // If you have moved
         var player; // Which player you are
         var turn; // Who turn it is
+        var playerPoints;
 
         var selectedPiece; // JS Object of selected
         var src; // Coordinates of selected piece
@@ -60,15 +62,20 @@
             drawboard(board);
         });
 
-        socket.on('player', function(playerType) {
+        socket.on('player', function(playerType, points) {
             player = playerType;
             $("#whoYouAre").html("You are player " + player);
+            $("#yourPoints").html("You have " + points + " points.");
+
         });
 
-        socket.on('startGame', function(firstTurn) {
+        socket.on('startGame', function(firstTurn, points) {
             turn = firstTurn;
+            playerPoints = points;
             $("#whosTurn").html("It is player " + turn + "'s turn.");
         })
+
+        var moveKey = 0;
 
         /* Making a selection or move */
         $('table').on("click", ".location",function() {
@@ -84,6 +91,7 @@
             } else { // Executing a move
                 var dest = tempSrc;
                 var move_status = canMove(selectedPiece, src, dest);
+                var moveBackwards = movedBackwards(selectedPiece, src, dest);
                 if (move_status !== -1) { // we are at least moving
                     // Create New Board Object
                     board[dest[0]][dest[1]] = selectedPiece;
@@ -91,6 +99,11 @@
                     if (move_status === 1) { //capture
                         board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
                         src = dest;
+                        if (selectedPiece.isKing) {
+                            moveKey += 3;
+                        } else {
+                            moveKey += 2;
+                        }
                     }
                     else if (move_status === 0) {//move
                         hasSelectedPiece = false; //turn has to be over
@@ -99,12 +112,22 @@
                     if (canKing(selectedPiece, dest)) {
                         selectedPiece.isKing = true;
                     }
+                    if (moveBackwards && !selectedPiece.isKing) {
+                        moveKey -= 1;
+                    }
                     hasMoved = true;
                     drawboard(board);
-                    socket.emit('refreshBoard', JSON.stringify(board));
+                    socket.emit('refreshBoard', JSON.stringify(board), moveKey);
                 }
                 
             }
+
+
+            //Default points in bank for everybody is 2
+            //Any non-king move backwards is -1
+            //Any capture is 2
+            //Any king capture is 3
+
 
         });
 

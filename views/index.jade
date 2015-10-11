@@ -156,6 +156,24 @@ html(lang='en')
 
       socket.on('disconnectError', function() {
         sweetAlert("Oh no!", "Someone disconnected. Shame on them.", "error");
+        swal({
+          title: "Oh no!",
+          text: "Someone disconnected. Shame on them.",
+          type: "error",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Join new lobby?",
+          cancelButtonText: "I'm out yo",
+          closeOnConfirm: false,
+          closeOnCancel: false
+        }, function(isConfirm) {
+          if (isConfirm) {
+            swal("Great!", "Your game will begin shortly.", "success");
+            socket.emit('reEnterLobby', player);
+          } else {
+            swal("Aww.", "We will see you again. Right now actually.", "error");
+          }
+        });
       });
 
       function setPoints(pointsArr) {
@@ -178,6 +196,10 @@ html(lang='en')
         setPoints(JSON.parse(pointsArr));
       });
 
+      socket.on('startMessage', function() {
+        sweetAlert("New Game", "A new game has started!", "success");
+      });
+
       //- socket.on('yourTurn', function() {
       //-   alertify.success("It is your turn!");
       //- });
@@ -185,7 +207,6 @@ html(lang='en')
       socket.on('updateGameState', function(firstTurn, points, pieces) {
         pointsArr = JSON.parse(points);
         piecesArr = JSON.parse(pieces);
-        console.log(piecesArr);
         turn = firstTurn;
         playerPoints = pointsArr[turn];
         if (turn == player) {
@@ -282,7 +303,6 @@ html(lang='en')
           var move_status = canMove(selectedPiece, src, dest);
           var moveBackwards = movedBackwards(selectedPiece, src, dest);
 
-          console.log("backwards " + movedBackwards(selectedPiece, src, dest));
           console.log("moveStatus " + move_status);
 
           if (move_status !== -1) { // we are at least moving

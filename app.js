@@ -93,16 +93,19 @@ function createBoard() {
 				// 	 [null, null, null, null, null, null, null, null, null, null, null, null]]; TESTCASE FOR QUICK WINS
 }
 
+function startNewGame() {
+	board = createBoard();
+	io.emit('board', JSON.stringify(board));
+	turnCounter = 0;
+}
+
+
 /*************************
  * Socket.io Connections *
  *************************/
 io.on('connection', function(socket) {
 
 	numberOfClients++;
-	if (numberOfClients > 4) {
-		queue.push(socket.id);
-	} else {
-		/* Send initial data to client */
 		colorForSocket = availablePlayers.pop(); // Choose an available player
 		socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
 		socketIDToSocket[socket.id] = socket; // Add to socket dictionary
@@ -116,35 +119,31 @@ io.on('connection', function(socket) {
 		if (numberOfClients == 4) {
 			gameStarted = true;
 			io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
+			io.emit('startMessage');
 			io.emit('newTurn', turn);
 		}
-	}
 
-	
 
 	/* If a player disconnects */
 	socket.on('disconnect', function() {
 		disconnectedColor = socketIDToColor[socket.id];
-		queueNextSocket = queue.shift();
-		console.log("queeue" + queueNextSocket);
 		if (gameStarted) {
 			io.emit('disconnectError');
-			//resetGame
-		} else {
-			availablePlayers.push(disconnectedColor);
-			delete socketIDToColor[socket.id];
-			delete colorToPoints[disconnectedColor];
-			delete pieceCounts[disconnectedColor];
-			delete colorToSocket[disconnectedColor];
-			numberOfClients--;
 		}
-		// } else if (queueNextSocket != null) {
-		// 	socketIDToColor[queueNextSocket] = disconnectedColor;
-		// 	colorToPoints[disconnectedColor] = DEFAULT_POINTS;
-		// 	pieceCounts[disconnectedColor] = NUM_PIECES_START;
-		// 	colorToSocket[disconnectedColor] = queueNextSocket;
-		// }
+		availablePlayers.push(disconnectedColor);
+		delete socketIDToColor[socket.id];
+		delete colorToPoints[disconnectedColor];
+		delete pieceCounts[disconnectedColor];
+		delete colorToSocket[disconnectedColor];
+		numberOfClients--;
+		startNewGame();
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
+	});
+
+	/* if a player reenters a lobby after a disconnect error. */
+	socket.on('reEnterLobby', function(player) {
+		colorToPoints[player] = DEFAULT_POINTS;
+		pieceCounts[player] = NUM_PIECES_START;
 	});
 
 	/* If a piece is captured. */
@@ -156,8 +155,6 @@ io.on('connection', function(socket) {
 			//var index = players.indexOf(team);
 			//players.splice(index, 1);
 			deadPlayers.push(team);
-			console.log("dead:");
-			console.log(team);
 			if (deadPlayers.length == 3) {
 				var winner;
 				for (var p in players) {
@@ -180,7 +177,6 @@ io.on('connection', function(socket) {
 	//  3 --> king was captured
 
 	socket.on('turnEnded', function(msg) {
-		console.log("turn ended");
 		var newGameState = JSON.parse(msg);
 		io.emit('killedPlayers', JSON.stringify(deadPlayers));
 		turnCounter++;

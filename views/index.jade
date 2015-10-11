@@ -204,7 +204,11 @@ html(lang='en')
 
       socket.on('player', function(playerType, pointsArr) {
         player = playerType; // Sets the player
-        $("#whoYouAre").html("You are player " + player);
+        if (player == null) {
+          $("#whoYouAre").html("You are a spectator. ");
+        } else {
+          $("#whoYouAre").html("You are player " + player);
+        }
         setPoints(JSON.parse(pointsArr));
       });
 

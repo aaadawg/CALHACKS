@@ -53,7 +53,6 @@ var colorToPoints = {};
 var turnCounter = 0;
 var turn = players[turnCounter % (players.length)];
 var pieceCounts = {};
-var queue = [];
 var gameStarted = false;
 
 /* Create a new piece object */

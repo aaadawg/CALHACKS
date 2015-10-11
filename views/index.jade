@@ -199,10 +199,11 @@ html(lang='en')
             board[src[0]][src[1]] = null;
 
             if (move_status === 1) { //capture
-              capturedPiece = getPiece([(src[0] + dest[0])/2,(src[1] + dest[1])/2]);
-              console.log(capturedPiece);
+              var midX = (src[0] + dest[0])/2;
+              var midY = (src[1] + dest[1])/2;
+              var capturedPiece = getPiece([midX, midY]);
               socket.emit('pieceCaptured', capturedPiece.team);
-              board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
+              board[midX][midY] = null;
               src = dest;
               if (selectedPiece.isKing) {
                 moveKey += 3;

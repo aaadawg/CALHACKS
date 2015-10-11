@@ -153,7 +153,20 @@ html(lang='en')
       /* Socket listener for you lose */
       socket.on('youLost', function(player) {
         $("#yourPoints").html("You have zero pieces left. You lost!");
+        sweetAlert("Oops...", "You lost! Better luck next time", "error");
       });
+
+      /* Socket listener for you win */
+      socket.on('youWin', function(player) {
+        sweetAlert("Good Job!", "You Wrecked It!", "success");
+        swal({  title: "One More?",   
+                text: "Enter the Next Game",   
+                type: "warning",   showCancelButton: true,   
+                confirmButtonColor: "#DD6B55",   
+                confirmButtonText: "Yes, lets go!",   
+                closeOnConfirm: false }, function(){   swal("Success", "You will be loaded into the next game.", "success"); });
+
+      })
 
       var moveKey = 0;
 

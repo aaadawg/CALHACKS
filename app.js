@@ -49,7 +49,7 @@ var socketIDToColor = {};
 var socketIDToSocket = {}
 var colorToPoints = {};
 var turnCounter = 0;
-var turn = players[turnCounter % 4];
+var turn = players[turnCounter % (players.length)];
 var pieceCounts = {};
 
 /* Create a new piece object */
@@ -111,12 +111,18 @@ io.on('connection', function(socket) {
 		io.emit('allPieces', JSON.stringify(pieceCounts));
 		if (pieceCounts[team] == 0) {
 			socket.emit('youLost', team);
+			var index = players.indexOf(team);
+			players.splice(index, 1);
+			if (players.length == 1) {
+				socket.emit('youWin', players[0]);
+				// END GAME
+			}
 		}
 	});
 
-	//pointKey signifies what move took place
-	//0 --> normal move
-	// -1 --> nonKing backwards move
+	// pointKey signifies what move took place
+	// 0 --> normal move
+	//-1 --> nonKing backwards move
 	// 2 --> capture
 	// 3 --> kingCapture
 
@@ -124,7 +130,7 @@ io.on('connection', function(socket) {
 		var newGameState = JSON.parse(msg);
 		turnCounter++;
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
-		turn = players[turnCounter % 4];
+		turn = players[turnCounter % (players.length)];
 		io.emit('startGame', turn, JSON.stringify(colorToPoints));
 	})
 

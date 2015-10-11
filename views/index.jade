@@ -99,7 +99,7 @@ html(lang='en')
                   .panel-body
                     p
                       | Welcome to CheckersSquared! </br></br>
-                      | You are probably wondering why you are here? We are also wondering the same thing. Well, now that we have you, We want to play a game... :) </br></br>
+                      | You are probably wondering why you are here? We are also wondering the same thing. Well, now that we have you, we want to play a game... :) </br></br>
                       | In this game you will be be pitted against 3 other challengers in a battle of wits, skill, and strategy. </br></br>
                       | The rules are simple... kinda: </br></br>
                       | You are playing a game similar to checkers. The goal of the game is to capture everybody else's pieces. There are two kinds of pieces: king, and non-king. A non-king piece can move and capture forward, left, right and backward. Each player will start with 8 non-king pieces. A piece gets kinged by moving to the opposite end of the board. A king piece can move and capture in any direction. To end turn, press space bar. Additionally, each player starts with a bank of points. You gain points by capturing pieces and you lose points by moving a non-king piece backwards. These points will also determine the winner in the case of a stalemate, which results from 30 consecutive moves with no captures. That's about it! Feel free to smack talk your opponents, the more the better!
@@ -154,6 +154,7 @@ html(lang='en')
       var socket = io(); // Create a new socket for this user
       var offsets = {"gold": 0, "white": 1, "blue": 2, "red": 3}; // offset for rotation amounts for each client
       var notifiedOfDeath = false;
+      var selectedLink;
       
       // Recieving board from server
       socket.on('board', function(boardJSON) {
@@ -319,14 +320,21 @@ html(lang='en')
       });
 
       /* Making a selection or move */
-      $('table').on("click", ".location",function() {
+      $('table').on("click", ".location", function() {
         var tempSrc = $(this).attr('id').split("-"); // [x, y]
         tempSrc = [parseInt(tempSrc[0]), parseInt(tempSrc[1])];
         var pieceAtSpot = getPiece(tempSrc);
         if (canSelect(pieceAtSpot)) { // Selecting a piece
+
+          if (hasSelectedPiece === true) {
+            selectedLink.removeClass("selectedPiece");
+          }
+
           src = tempSrc;
           selectedPiece = pieceAtSpot; // Get Piece from Board
           hasSelectedPiece = true;
+          selectedLink = $(this).children();
+          selectedLink.addClass("selectedPiece");
         } else if (hasSelectedPiece) { // Executing a move
 
           var dest = tempSrc;

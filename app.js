@@ -111,6 +111,7 @@ io.on('connection', function(socket) {
 	io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	if (numberOfClients == 4) {
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
+		io.emit('newTurn', turn);
 	}
 
 	/* If a player disconnects */

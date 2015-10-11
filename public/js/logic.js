@@ -55,6 +55,7 @@ function canMove(piece, src, dest) {
 	if (hasSelectedPiece) {
 		if (movedBackwards(piece, src, dest)) {
 			if (playerPoints < 1) {
+				sweetAlert("Oops...", "You have no points!", "error");
 				return -1;
 			}
 		}

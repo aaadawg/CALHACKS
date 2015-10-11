@@ -103,17 +103,27 @@ function movedBackwards(piece, src, dest) {
 	if (piece.isKing) {
 		return true;
 	}
+	console.log("yo");
+	console.log(piece.team);
 	var zeroDiff = dest[0] - src[0];
 	var oneDiff = dest[1] - src[1];
 	if (piece.team == "gold") {
-		if (zeroDiff == 1 || zeroDiff == 2) return true;
+		if (zeroDiff == 1 || zeroDiff == 2) {
+			return true;
+		}
 	} else if (piece.team == "blue") {
-		if (zeroDiff == -1 || zeroDiff == -2) return true;
+		if (zeroDiff == -1 || zeroDiff == -2) {
+			return true;
+		}
 	} else if (piece.team == "white") {
-		if (oneDiff == 1 || oneDiff == 2) return true;
+		if (oneDiff == 1 || oneDiff == 2) {
+			return true;
+		}
 	} else if (piece.team == "red") {
-		if (oneDiff == -1 || oneDiff == -2) return true;
-	} else {
-		return false;
-	}
+		console.log("red");
+		if (oneDiff == -1 || oneDiff == -2) {
+			return true;
+		}
+	} 
+	return false;
 }

@@ -189,16 +189,24 @@
 
             var tempSrc = $(this).attr('id').split("-"); // [x, y]
             tempSrc = [parseInt(tempSrc[0]), parseInt(tempSrc[1])];
-            pieceAtSpot = getPiece(board, tempSrc);
+            var pieceAtSpot = getPiece(board, tempSrc);
+            console.log(pieceAtSpot);
 
             if (canSelect(pieceAtSpot)) { // Selecting a piece
                 src = tempSrc;
                 selectedPiece = pieceAtSpot; // Get Piece from Board
                 hasSelectedPiece = true;
+
             } else { // Executing a move
                 var dest = tempSrc;
                 var move_status = canMove(selectedPiece, src, dest);
                 var moveBackwards = movedBackwards(selectedPiece, src, dest);
+                console.log(selectedPiece);
+                console.log(src);
+                console.log(dest);
+                console.log(movedBackwards(selectedPiece, src, dest));
+                console.log(playerPoints);
+                console.log(false);
                 if (move_status !== -1) { // we are at least moving
                     // Create New Board Object
                     board[dest[0]][dest[1]] = selectedPiece;

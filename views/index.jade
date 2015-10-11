@@ -25,15 +25,20 @@ html(lang='en')
           .col-sm-11
             .row.messagesRow0
               .col-sm-12
-                h4 Message Feed
+                h4
+                  span.glyphicon.glyphicon-pencil
+                  &nbsp;&nbsp;Message Feed
 
             .row.scrollableTable
               .col-sm-12
                 table.table.table-striped.messagesRow0
                   thead
                     tr
-                      th User              
-                      th Message     
+                      th User&nbsp;&nbsp;
+                        span.glyphicon.glyphicon-user
+
+                      th Message&nbsp;&nbsp;
+                        span.glyphicon.glyphicon-comment     
                   tbody#messages
 
             br
@@ -58,8 +63,30 @@ html(lang='en')
 
             .tab-content(id="myTabContent")
               div(class="tab-pane fade in active" id="info")
-                .panel.panel-default.tabDiv
+                .panel.panel-default
                   .panel-body
+                    table.table.table-bordered
+                      thead
+                        tr
+                          th 
+                          th red
+                          th blue
+                          th white
+                          th gold
+                        tr
+                          th Points
+                          th#redPoints
+                          th#bluePoints
+                          th#whitePoints
+                          th#goldPoints
+                        tr
+                          th Pieces
+                          th 1
+                          th 1
+                          th 1
+                          th 1
+
+
                     h5#whosTurn
                     h5#whoYouAre
                     h5#allPoints

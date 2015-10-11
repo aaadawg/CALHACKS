@@ -46,31 +46,28 @@ var colorToPoints = {};
 var turnCounter = 0;
 var turn = players[turnCounter % 4];
 
-
-
 /* Create a new piece object */
 function createPiece(team) {
-	piece = new Object();
-	piece.team = team;
-	piece.isKing = false;
-	return piece;
+    piece = new Object();
+    piece.team = team;
+    piece.isKing = false;
+    return piece;
 }
 
-// COME BACK AND REMOVE POSITIONS
-// Creates Initial Board
+/* Creates Initial Board */
 function createBoard() {
-	return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
-			[null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-			[null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-			[null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
-			[null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
+    return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
+            [null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
+            [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
 }
 
 /*************************
@@ -120,5 +117,13 @@ io.on('connection', function(socket) {
 		//socket.emit('player', turn, colorToPoints[turn]);
 		io.emit('board', JSON.stringify(board));
 	})
-	
+
+
+
+    /* Messaging Client */
+     socket.on('chat message', function(msg){
+        console.log('message: ' + msg);
+        io.emit('chat message', msg);
+    });
+    
 });

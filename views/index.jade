@@ -28,12 +28,13 @@ html(lang='en')
                 h4 Message Feed
 
             .row.scrollableTable
-              table.table.table-striped.messagesRow0
-                thead
-                  tr
-                    th User              
-                    th Message     
-                tbody#messages
+              .col-sm-12
+                table.table.table-striped.messagesRow0
+                  thead
+                    tr
+                      th User              
+                      th Message     
+                  tbody#messages
 
             br
            
@@ -42,6 +43,16 @@ html(lang='en')
                 input#m.form-control(type='text', autofocus='', placeholder='Send a message') 
               .col-sm-3
                 button#submitbtn.btn.btn-primary(type='submit') Send Message
+
+            br
+
+            .row
+              .col-sm-12
+                ul(class='nav nav-tabs')
+                  li(class='active' role="presentation")
+                    a(data-toggle="tab") Game Information
+                  li(role="presentation")
+                    a(data-toggle="tab") Rules
 
             .row.messagesRow1
               .col-sm-12   

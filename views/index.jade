@@ -62,7 +62,7 @@ html(lang='en')
                   .panel-body
                     h5#whosTurn
                     h5#whoYouAre
-                    h5#yourPoints
+                    h5#allPoints
               div(class="tab-pane fade in" id="rules")
                 .panel.panel-default.tabDiv(id="rulesDiv")
                   .panel-body
@@ -72,6 +72,7 @@ html(lang='en')
                       | In this game you will be be pitted against 3 other idiots in a battle of wits, skill, and assss. </br></br>
                       | The rules are simple.. kinda: </br></br>
                       | You are playing checkers but you can move and capture forward, left, right, and backward. However moving Backwards will cost you a swag point. You will notice the point tally in the box under the board. These are points that you will use to move a normal piece backwards. You start off with two but can gain more by capturing enemy pieces. Swag points will also break ties in the case of a stalemate. A stalemate occurs if no captures occur in 30 moves. If you move a piece to the other side of the board, that piece will be kinged and can also move and capture diagonally. Thats about it. Feel free to smack talk your oppenents, the more profane the better!
+
 
     script(src='https://cdn.socket.io/socket.io-1.2.0.js')
     script(src='js/sweetalert.min.js')
@@ -119,17 +120,30 @@ html(lang='en')
         drawboard(board);
       });
 
-      socket.on('player', function(playerType, points) {
+      socket.on('player', function(playerType, pointsArr) {
+        pointsArr = JSON.parse(pointsArr);
         player = playerType;
         $("#whoYouAre").html("You are player " + player);
-        $("#yourPoints").html("You have " + points + " points.");
+        $("#allPoints").empty();
+        for (var key in pointsArr) {
+          $("#allPoints").append(key + "'s points: " + pointsArr[key] + ". ");
+        }
       });
 
       socket.on('startGame', function(firstTurn, points) {
+        points = JSON.parse(points);
         turn = firstTurn;
-        console.log(turn);
-        playerPoints = points;
+        playerPoints = points[turn];
         $("#whosTurn").html("It is player " + turn + "'s turn.");
+        $("#allPoints").empty();
+        for (var key in points) {
+          $("#allPoints").append(key + "'s points: " + points[key] + ". ");
+        }
+      });
+
+      /* Socket listener for you lose */
+      socket.on('youLost', function(player) {
+        $("#yourPoints").html("You have zero pieces left. You lost!");
       });
 
       var moveKey = 0;
@@ -178,7 +192,7 @@ html(lang='en')
       $('table').on("click", ".location",function() {
         var tempSrc = $(this).attr('id').split("-"); // [x, y]
         tempSrc = [parseInt(tempSrc[0]), parseInt(tempSrc[1])];
-        var pieceAtSpot = getPiece(board, tempSrc);
+        var pieceAtSpot = getPiece(tempSrc);
         if (canSelect(pieceAtSpot)) { // Selecting a piece
           src = tempSrc;
           selectedPiece = pieceAtSpot; // Get Piece from Board
@@ -189,11 +203,7 @@ html(lang='en')
           var move_status = canMove(selectedPiece, src, dest);
           var moveBackwards = movedBackwards(selectedPiece, src, dest);
 
-          console.log("selectedPiece " + selectedPiece);
-          console.log("src array " + src);
-          console.log("dest " + dest);
           console.log("backwards " + movedBackwards(selectedPiece, src, dest));
-          console.log("playerPoints " + playerPoints);
           console.log("moveStatus " + move_status);
 
           if (move_status !== -1) { // we are at least moving
@@ -203,7 +213,11 @@ html(lang='en')
             board[src[0]][src[1]] = null;
 
             if (move_status === 1) { //capture
-              board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
+              var midX = (src[0] + dest[0])/2;
+              var midY = (src[1] + dest[1])/2;
+              var capturedPiece = getPiece([midX, midY]);
+              socket.emit('pieceCaptured', capturedPiece.team);
+              board[midX][midY] = null;
               src = dest;
               if (selectedPiece.isKing) {
                 moveKey += 3;

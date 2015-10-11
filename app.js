@@ -40,6 +40,7 @@ app.get('/', function(req, res) {
  * Game Logic *
  **************/
 var DEFAULT_POINTS = 2;
+var NUM_PIECES_START = 8;
 var numberOfClients = 0;
 var board = createBoard();
 var players = ['red', 'white', 'gold', 'blue'];
@@ -49,6 +50,7 @@ var socketIDToSocket = {}
 var colorToPoints = {};
 var turnCounter = 0;
 var turn = players[turnCounter % 4];
+var pieceCounts = {};
 
 /* Create a new piece object */
 function createPiece(team) {
@@ -86,11 +88,12 @@ io.on('connection', function(socket) {
 	socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
 	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
 	colorToPoints[colorForSocket] = DEFAULT_POINTS; //Every player gets 2 points to start
-	socket.emit('player', colorForSocket, colorToPoints[colorForSocket]); // Send to client
+	pieceCounts[colorForSocket] = NUM_PIECES_START; //Every color starts with 8 pieces
+	socket.emit('player', colorForSocket, JSON.stringify(colorToPoints)); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
 
 	if (numberOfClients == 4) {
-		io.emit('startGame', turn, colorToPoints[turn]);
+		io.emit('startGame', turn, JSON.stringify(colorToPoints));
 	}
 
 	/* If a player disconnects */
@@ -99,6 +102,14 @@ io.on('connection', function(socket) {
 		availablePlayers.push(disconnectedColor);
 		delete socketIDToColor[socket.id];
 		numberOfClients--;
+	});
+
+	/* If a piece is captured. */
+	socket.on('pieceCaptured', function(team) {
+		pieceCounts[team] -= 1;
+		if (pieceCounts[team] == 0) {
+			socket.emit('youLost', team);
+		}
 	});
 
 	//pointKey signifies what move took place
@@ -110,15 +121,15 @@ io.on('connection', function(socket) {
 	socket.on('turnEnded', function(msg) {
 		var newGameState = JSON.parse(msg);
 		turnCounter++;
-		socket.emit('player', turn, colorToPoints[turn]);
+		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		turn = players[turnCounter % 4];
-		io.emit('startGame', turn, colorToPoints[turn]);
+		io.emit('startGame', turn, JSON.stringify(colorToPoints));
 	})
 
 	socket.on('refreshBoard', function(JSONBoard, pointKey) {
 		colorToPoints[turn] += pointKey;
 		board = JSON.parse(JSONBoard);
-		//socket.emit('player', turn, colorToPoints[turn]);
+		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		io.emit('board', JSON.stringify(board));
 	})
 

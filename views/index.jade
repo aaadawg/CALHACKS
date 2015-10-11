@@ -25,10 +25,10 @@ html(lang='en')
       .row
         .col-md-6
           table#gameBoard(cellpadding='0', cellspacing='0')
-        .col-md-6
-          .col-sm-1
-          .col-sm-11
-            .row.messagesRow0
+        .col-md-6(id='messagesRow')
+          .col-xs-1
+          .col-xs-11
+            .row
               .col-sm-12
                 h4
                   span.glyphicon.glyphicon-pencil
@@ -47,9 +47,9 @@ html(lang='en')
 
             br
            
-            .row.messagesRow0
+            .row
               .col-sm-7
-                input#m.form-control(type='text', autofocus='', placeholder='Send a message') 
+                input#m.form-control.messagesRow2(type='text', autofocus='', placeholder='Send a message') 
               .col-sm-3
                 button#submitbtn.btn.btn-primary(type='submit') Send Message
 
@@ -65,7 +65,7 @@ html(lang='en')
             
             br
 
-            .tab-content(id="myTabContent")
+            .tab-content
               div(class="tab-pane fade in active" id="info")
                 .panel.panel-default
                   .panel-body
@@ -122,16 +122,14 @@ html(lang='en')
         //<div class='spinner'><div class='rect1'></div><div class='rect2'></div><div class='rect3'></div><div class='rect4'></div><div class='rect5'></div></div>"
       });
 
-      $('.messagesRow1').hide();
-      $('.messagesRow2').hide();
+      $('#gameBoard').hide();
+      $('#messagesRow').hide();
 
-      $(document).ready(function () {
-        $('#gameBoard').jAnimate("bounceInUp");
-      });
+      setTimeout(function() { $('#gameBoard').show(); $('#gameBoard').jAnimate("bounceInUp"); }, 2000);
+      setTimeout(function() { $('#messagesRow').show(); $('#messagesRow').jAnimate('fadeIn'); }, 2300);
 
-      $('.messagesRow0').jAnimate('fadeInRight');
-      setTimeout(function() { $('.messagesRow1').show(); $('.messagesRow1').jAnimate('fadeInRight'); }, 200);
-      setTimeout(function() { $('.messagesRow2').show(); $('.messagesRow2').jAnimate('fadeInRight'); }, 300);
+
+
 
       $('#rulesTab').on('click', function() {
         $('#rulesDiv').animate({ scrollTop:  $('#rulesDiv').scrollTop() + 220 }, 20000, "linear");
@@ -141,7 +139,7 @@ html(lang='en')
         $(this).stop();
       });
 
-      setTimeout(function() { loading_screen.finish(); }, 5000);
+      setTimeout(function() { loading_screen.finish(); }, 2000);
 
     script.
 

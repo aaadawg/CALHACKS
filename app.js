@@ -41,6 +41,7 @@ app.get('/', function(req, res) {
  **************/
 var DEFAULT_POINTS = 2;
 var NUM_PIECES_START = 8;
+var STALMATE_NUMBER = 30;
 var numberOfClients = 0;
 var board = createBoard();
 var players = ['red', 'white', 'gold', 'blue'];
@@ -54,6 +55,7 @@ var turnCounter = 0;
 var turn = players[turnCounter % (players.length)];
 var pieceCounts = {};
 var gameStarted = false;
+var stalemateCounter = 0;
 
 /* Create a new piece object */
 function createPiece(team) {
@@ -78,24 +80,31 @@ function createBoard() {
             [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
             [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
 
-    // return [[null, null, null, null, null, null, null, null, null, null, null, null], 
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, createPiece("gold"), createPiece("red"), null, null, null, null, null, null, null, null],
-				// 	 [null, null, createPiece("white"), createPiece("blue"), null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
-				// 	 [null, null, null, null, null, null, null, null, null, null, null, null]]; TESTCASE FOR QUICK WINS
+     // return [[null, null, null, null, null, null, null, null, null, null, null, null], 
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, createPiece("gold"), createPiece("red"), null, null, null, null, null, null, null, null],
+					//  [null, null, createPiece("white"), createPiece("blue"), null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null],
+					//  [null, null, null, null, null, null, null, null, null, null, null, null]]; //TESTCASE FOR QUICK WINS
 }
 
 function startNewGame() {
 	board = createBoard();
 	io.emit('board', JSON.stringify(board));
 	turnCounter = 0;
+	stalemateCounter = 0;
+	for (var c in colorToPoints) {
+		colorToPoints[c] = DEFAULT_POINTS;
+	}
+	for (var p in pieceCounts) {
+		pieceCounts[p] = NUM_PIECES_START;
+	}
 }
 
 
@@ -147,12 +156,10 @@ io.on('connection', function(socket) {
 
 	/* If a piece is captured. */
 	socket.on('pieceCaptured', function(team) {
+		stalemateCounter = 0;
 		pieceCounts[team] -= 1;
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 		if (pieceCounts[team] == 0) {
-			//socket.emit('youLost', team);
-			//var index = players.indexOf(team);
-			//players.splice(index, 1);
 			deadPlayers.push(team);
 			if (deadPlayers.length == 3) {
 				var winner;
@@ -169,13 +176,8 @@ io.on('connection', function(socket) {
 		}
 	});
 
-	// pointKey signifies what move took place
-	//  0 --> normal move
-	// -1 --> nonKing backwards move
-	//  2 --> capture
-	//  3 --> king was captured
-
 	socket.on('turnEnded', function(msg) {
+
 		var newGameState = JSON.parse(msg);
 		io.emit('killedPlayers', JSON.stringify(deadPlayers));
 		turnCounter++;
@@ -189,9 +191,35 @@ io.on('connection', function(socket) {
 
 		io.emit('newTurn', turn);
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
+
+		// handle stalemate
+		if (stalemateCounter >= STALMATE_NUMBER) {
+			var winning_pts = -1;
+			var winner;
+			for (var p in players) {
+				team = players[p];
+				pts = colorToPoints[team]
+				if (colorToPoints[team] > winning_pts){
+					winner = team;
+					winning_pts = pts;
+				}
+			}
+			io.emit("stalemate", winner);
+			startNewGame();
+			io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
+		}
 	});
 
+	// pointKey signifies what move took place
+	//  0 --> normal move
+	// -1 --> nonKing backwards move
+	//  2 --> capture
+	//  3 --> king was captured
+
 	socket.on('refreshBoard', function(JSONBoard, pointKey) {
+		if ((pointKey == 0 || pointKey == -1) && deadPlayers.length == 2) {
+			stalemateCounter += 1;
+		}
 		colorToPoints[turn] += pointKey;
 		board = JSON.parse(JSONBoard);
 		socket.emit('player', turn, JSON.stringify(colorToPoints));

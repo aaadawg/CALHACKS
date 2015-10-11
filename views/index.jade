@@ -265,6 +265,15 @@ html(lang='en')
 
       });
 
+      /* Socket listener for stalemate */
+      socket.on("stalemate", function(winner) {
+        if (player == winner) {
+          swal("Yay!", "You won on the stalemate technicality", "success");
+        } else if (!notifiedOfDeath){
+          swal("GG!", "You lost in a stalemate... I'm so proud of you", "error");
+        }
+      });
+
       var moveKey = 0;
 
       /******************
@@ -321,8 +330,6 @@ html(lang='en')
           var dest = tempSrc;
           var move_status = canMove(selectedPiece, src, dest);
           var moveBackwards = movedBackwards(selectedPiece, src, dest);
-
-          console.log("moveStatus " + move_status);
 
           if (move_status !== -1) { // we are at least moving
 

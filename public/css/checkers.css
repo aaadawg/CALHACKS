@@ -50,10 +50,10 @@ a.gold:hover {
 	color: #FDB515;
 }
 .white {
-	color: black;
+	color: #999999;
 }
 a.white:hover {
-	color: black;
+	color: #999999;
 }
 .red {
 	color: #A60000;

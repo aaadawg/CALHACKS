@@ -118,7 +118,7 @@ io.on('connection', function(socket) {
 	socket.on('refreshBoard', function(JSONBoard, pointKey) {
 		colorToPoints[turn] += pointKey;
 		board = JSON.parse(JSONBoard);
-		//socket.emit('player', turn, colorToPoints[turn]);
+		socket.emit('player', turn, colorToPoints[turn]);
 		io.emit('board', JSON.stringify(board));
 	})
 

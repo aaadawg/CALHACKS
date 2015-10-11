@@ -176,11 +176,7 @@ html(lang='en')
           var move_status = canMove(selectedPiece, src, dest);
           var moveBackwards = movedBackwards(selectedPiece, src, dest);
 
-          console.log("selectedPiece " + selectedPiece);
-          console.log("src array " + src);
-          console.log("dest " + dest);
           console.log("backwards " + movedBackwards(selectedPiece, src, dest));
-          console.log("playerPoints " + playerPoints);
           console.log("moveStatus " + move_status);
 
           if (move_status !== -1) { // we are at least moving

@@ -16,7 +16,6 @@ function rotateClockwise(old_board) {
             new_board[i][j] = old_board[old_board[i].length - j - 1][i];
         }
     }
-	console.log(new_board);
 	return new_board;
 }
 
@@ -41,7 +40,7 @@ function drawboard(board) {
 
 
 function canSelect(piece) {
-	if (piece != null && piece.team == turn) {
+	if (piece != null && piece.team == turn && player == turn) {
 		if (!hasMoved) {
 			return true;
 		}
@@ -116,6 +115,7 @@ function getPiece(board, src) {
 
 function movedBackwards(piece, src, dest) {
 	var zeroDiff = dest[0] - src[0];
+	console.log("difference " + zeroDiff)
 	if (piece.isKing) {
 		return true;
 	} else if (zeroDiff == 1 || zeroDiff == 2) {

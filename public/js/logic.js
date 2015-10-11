@@ -1,3 +1,25 @@
+function rotateClockwise(old_board) {
+	var new_board = [[null, null, null, null, null, null, null, null, null, null, null, null], 
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null]];
+	for (var i = 0; i < old_board[0].length; i++) {
+        for (var j = 0; j < old_board[i].length; j++) {
+            new_board[i][j] = old_board[old_board[i].length - j - 1][i];
+        }
+    }
+	console.log(new_board);
+	return new_board;
+}
+
 function drawboard(board) {
     $("#gameBoard").empty();
     for (var i = 0; i < board.length; i++) {
@@ -34,7 +56,7 @@ function canMove(piece, src, dest) {
 	if (hasSelectedPiece) {
 		if (movedBackwards(piece, src, dest)) {
 			if (playerPoints < 1) {
-				return false;
+				return -1;
 			}
 		}
 		var diffX = Math.abs(src[0] - dest[0]);
@@ -103,8 +125,6 @@ function movedBackwards(piece, src, dest) {
 	if (piece.isKing) {
 		return true;
 	}
-	console.log("yo");
-	console.log(piece.team);
 	var zeroDiff = dest[0] - src[0];
 	var oneDiff = dest[1] - src[1];
 	if (piece.team == "gold") {
@@ -120,7 +140,6 @@ function movedBackwards(piece, src, dest) {
 			return true;
 		}
 	} else if (piece.team == "red") {
-		console.log("red");
 		if (oneDiff == -1 || oneDiff == -2) {
 			return true;
 		}

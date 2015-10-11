@@ -154,6 +154,10 @@ html(lang='en')
         drawboard(board);
       });
 
+      socket.on('disconnectError', function() {
+        sweetAlert("Oh no!", "Someone disconnected. Shame on them.", "error");
+      });
+
       function setPoints(pointsArr) {
         $('#bluePoints').empty().html(pointsArr["blue"]);
         $('#redPoints').empty().html(pointsArr["red"]);

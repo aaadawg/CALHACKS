@@ -53,6 +53,8 @@ var colorToPoints = {};
 var turnCounter = 0;
 var turn = players[turnCounter % (players.length)];
 var pieceCounts = {};
+var queue = [];
+var gameStarted = false;
 
 /* Create a new piece object */
 function createPiece(team) {
@@ -97,32 +99,51 @@ function createBoard() {
 io.on('connection', function(socket) {
 
 	numberOfClients++;
-
-	/* Send initial data to client */
-	colorForSocket = availablePlayers.pop(); // Choose an available player
-	socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
-	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
-	colorToSocket[colorForSocket] = socket;
-	colorToPoints[colorForSocket] = DEFAULT_POINTS; //Every player gets 2 points to start
-	pieceCounts[colorForSocket] = NUM_PIECES_START; //Every color starts with 8 pieces
-	socket.emit('player', colorForSocket, JSON.stringify(colorToPoints)); // Send to client
-	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
-	io.emit('allPieces', JSON.stringify(pieceCounts));
-	io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
-	if (numberOfClients == 4) {
+	if (numberOfClients > 4) {
+		queue.push(socket.id);
+	} else {
+		/* Send initial data to client */
+		colorForSocket = availablePlayers.pop(); // Choose an available player
+		socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
+		socketIDToSocket[socket.id] = socket; // Add to socket dictionary
+		colorToSocket[colorForSocket] = socket;
+		colorToPoints[colorForSocket] = DEFAULT_POINTS; //Every player gets 2 points to start
+		pieceCounts[colorForSocket] = NUM_PIECES_START; //Every color starts with 8 pieces
+		socket.emit('player', colorForSocket, JSON.stringify(colorToPoints)); // Send to client
+		io.emit('board', JSON.stringify(board)); // Send current board to all sockets
+		io.emit('allPieces', JSON.stringify(pieceCounts));
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
-		io.emit('newTurn', turn);
+		if (numberOfClients == 4) {
+			gameStarted = true;
+			io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
+			io.emit('newTurn', turn);
+		}
 	}
+
+	
 
 	/* If a player disconnects */
 	socket.on('disconnect', function() {
 		disconnectedColor = socketIDToColor[socket.id];
-		availablePlayers.push(disconnectedColor);
-		delete socketIDToColor[socket.id];
-		delete colorToPoints[disconnectedColor];
-		delete pieceCounts[disconnectedColor];
-		delete colorToSocket[disconnectedColor];
-		numberOfClients--;
+		queueNextSocket = queue.shift();
+		console.log("queeue" + queueNextSocket);
+		if (gameStarted) {
+			io.emit('disconnectError');
+			//resetGame
+		} else {
+			availablePlayers.push(disconnectedColor);
+			delete socketIDToColor[socket.id];
+			delete colorToPoints[disconnectedColor];
+			delete pieceCounts[disconnectedColor];
+			delete colorToSocket[disconnectedColor];
+			numberOfClients--;
+		}
+		// } else if (queueNextSocket != null) {
+		// 	socketIDToColor[queueNextSocket] = disconnectedColor;
+		// 	colorToPoints[disconnectedColor] = DEFAULT_POINTS;
+		// 	pieceCounts[disconnectedColor] = NUM_PIECES_START;
+		// 	colorToSocket[disconnectedColor] = queueNextSocket;
+		// }
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
 

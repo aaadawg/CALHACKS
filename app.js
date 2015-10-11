@@ -80,7 +80,7 @@ function createBoard() {
  * Socket.io Connections *
  *************************/
 io.on('connection', function(socket) {
-	
+
 	numberOfClients++;
 
 	/* Send initial data to client */
@@ -92,9 +92,10 @@ io.on('connection', function(socket) {
 	socket.emit('player', colorForSocket, JSON.stringify(colorToPoints)); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
 	io.emit('allPieces', JSON.stringify(pieceCounts));
-
+	console.log(JSON.stringify(pieceCounts));
+	io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	if (numberOfClients == 4) {
-		io.emit('startGame', turn, JSON.stringify(colorToPoints));
+		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	}
 
 	/* If a player disconnects */
@@ -102,41 +103,43 @@ io.on('connection', function(socket) {
 		disconnectedColor = socketIDToColor[socket.id];
 		availablePlayers.push(disconnectedColor);
 		delete socketIDToColor[socket.id];
+		console.log(disconnectedColor);
+		delete colorToPoints[disconnectedColor];
+		delete pieceCounts[disconnectedColor];
 		numberOfClients--;
+		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
 
 	/* If a piece is captured. */
 	socket.on('pieceCaptured', function(team) {
 		pieceCounts[team] -= 1;
-		io.emit('allPieces', JSON.stringify(pieceCounts));
+		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 		if (pieceCounts[team] == 0) {
 			socket.emit('youLost', team);
 		}
 	});
 
-	//pointKey signifies what move took place
-	//0 --> normal move
+	// pointKey signifies what move took place
+	//  0 --> normal move
 	// -1 --> nonKing backwards move
-	// 2 --> capture
-	// 3 --> kingCapture
+	//  2 --> capture
+	//  3 --> kingCapture
 
 	socket.on('turnEnded', function(msg) {
 		var newGameState = JSON.parse(msg);
 		turnCounter++;
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		turn = players[turnCounter % 4];
-		io.emit('startGame', turn, JSON.stringify(colorToPoints));
+		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	})
 
 	socket.on('refreshBoard', function(JSONBoard, pointKey) {
 		colorToPoints[turn] += pointKey;
 		board = JSON.parse(JSONBoard);
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
-		io.emit('startGame', turn, JSON.stringify(colorToPoints));
+		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 		io.emit('board', JSON.stringify(board));
 	})
-
-
 
     /* Messaging Client */
      socket.on('chat message', function(msg){

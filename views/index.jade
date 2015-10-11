@@ -27,8 +27,7 @@ html(lang='en')
               .col-sm-12
                 h4
                   span.glyphicon.glyphicon-pencil
-                  &nbsp;&nbsp;Message Feed
-
+                  &nbsp;&nbsp; Message Feed
             .row.scrollableTable
               .col-sm-12
                 table.table.table-striped.messagesRow0
@@ -81,10 +80,10 @@ html(lang='en')
                           th#goldPoints
                         tr
                           th Pieces
-                          th 1
-                          th 1
-                          th 1
-                          th 1
+                          th#redPieces
+                          th#bluePieces
+                          th#whitePieces
+                          th#goldPieces
 
 
                     h5#whosTurn
@@ -151,35 +150,42 @@ html(lang='en')
         drawboard(board);
       });
 
+      function setPoints(pointsArr) {
+        $('#bluePoints').empty().html(pointsArr["blue"]);
+        $('#redPoints').empty().html(pointsArr["red"]);
+        $('#whitePoints').empty().html(pointsArr["white"]);
+        $('#goldPoints').empty().html(pointsArr["gold"]);
+      }
+
+      function setPieces(arr) {
+        $('#bluePieces').empty().html(arr["blue"]);
+        $('#redPieces').empty().html(arr["red"]);
+        $('#whitePieces').empty().html(arr["white"]);
+        $('#goldPieces').empty().html(arr["gold"]);
+      }
+
       socket.on('player', function(playerType, pointsArr) {
-        pointsArr = JSON.parse(pointsArr);
-        player = playerType;
+        player = playerType; // Sets the player
         $("#whoYouAre").html("You are player " + player);
-        $("#allPoints").empty();
-        for (var key in pointsArr) {
-          $("#allPoints").append(key + "'s points: " + pointsArr[key] + ". ");
-        }
+        setPoints(JSON.parse(pointsArr));
       });
 
-      socket.on('startGame', function(firstTurn, points) {
-        points = JSON.parse(points);
+      socket.on('updateGameState', function(firstTurn, points, pieces) {
+        console.log(pieces);
+        console.log(points);
+        pointsArr = JSON.parse(points);
+        piecesArr = JSON.parse(pieces);
+        console.log(piecesArr);
         turn = firstTurn;
-        playerPoints = points[turn];
+        playerPoints = pointsArr[turn];
         $("#whosTurn").html("It is player " + turn + "'s turn.");
-        $("#allPoints").empty();
-        for (var key in points) {
-          $("#allPoints").append(key + "'s points: " + points[key] + ". ");
-        }
-      });
-
-      socket.on('allPieces', function(pieces) {
-        pieces = JSON.parse(pieces);
-        //dictionary of team to number of pieces.
+        setPoints(pointsArr);
+        setPieces(piecesArr);
       });
 
       /* Socket listener for you lose */
       socket.on('youLost', function(player) {
-        $("#yourPoints").html("You have zero pieces left. You lost!");
+        sweetalert("You lose!");
       });
 
       var moveKey = 0;

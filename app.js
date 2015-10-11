@@ -40,7 +40,7 @@ app.get('/', function(req, res) {
  * Game Logic *
  **************/
 var DEFAULT_POINTS = 2;
-var NUM_PIECES_START = 1;
+var NUM_PIECES_START = 8;
 var numberOfClients = 0;
 var board = createBoard();
 var players = ['red', 'white', 'gold', 'blue'];
@@ -64,31 +64,31 @@ function createPiece(team) {
 
 /* Creates Initial Board */
 function createBoard() {
-    // return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
-    //         [null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
-    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-    //         [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
-    //         [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
+    return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
+            [null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+            [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
+            [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
 
-    return [[null, null, null, null, null, null, null, null, null, null, null, null], 
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, createPiece("gold"), createPiece("red"), null, null, null, null, null, null, null, null],
-					 [null, null, createPiece("white"), createPiece("blue"), null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null],
-					 [null, null, null, null, null, null, null, null, null, null, null, null]];
+    // return [[null, null, null, null, null, null, null, null, null, null, null, null], 
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, createPiece("gold"), createPiece("red"), null, null, null, null, null, null, null, null],
+				// 	 [null, null, createPiece("white"), createPiece("blue"), null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null],
+				// 	 [null, null, null, null, null, null, null, null, null, null, null, null]]; TESTCASE FOR QUICK WINS
 }
 
 /*************************
@@ -164,7 +164,7 @@ io.on('connection', function(socket) {
 		turnCounter++;
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		turn = players[turnCounter % (players.length)];
-		
+
 		while (deadPlayers.indexOf(turn) != -1) {
 			turnCounter ++;
 			turn = players[turnCounter % (players.length)];

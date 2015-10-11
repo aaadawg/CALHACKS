@@ -26,9 +26,13 @@ console.log("Listening");
 /* Serve static content */
 app.use(express.static('public'));
 
+/* Set Jade view engine */
+app.set('view engine', 'jade');
+
 // Routing for webpages
 app.get('/', function(req, res) {
-  res.sendfile("chessboard.html");
+  //res.sendfile("chessboard.html");
+  res.render('index');
 });
 
 

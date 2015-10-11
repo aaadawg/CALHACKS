@@ -1,0 +1,211 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')   
+    meta(http-equiv='X-UA-Compatible', content='IE=edge')
+    meta(name='viewport', content='width=device-width, initial-scale=1')
+    meta(name='description', content='Online Checkers')
+    meta(name='author', content='Rohit Lalchandani, Pranay Kumar, Anish Balaji, Brennen Nelson')
+
+    title CalHacks Checkers
+
+    link(href='css/bootstrap-hero.min.css', rel='stylesheet')
+    link(href='css/checkers.css', rel='stylesheet')
+    link(rel='stylesheet', type='text/css', href='css/sweetalert.css')
+    link(rel='stylesheet' type='text/css' href='css/animate.min.css')
+
+  body
+    // Main container
+    .container
+      .row
+        .col-md-7
+          table#gameBoard(cellpadding='0', cellspacing='0')
+        .col-md-5
+          .row.messagesRow0
+            .col-sm-9
+              h4 Message Feed            
+            .col-sm-3
+              button#clearButton.btn.btn-warning.btn-sm(type='button') Clear Message History
+
+          table.table.table-striped.messagesRow0
+            thead
+              tr
+                th User              
+                th Message     
+            tbody#messages
+         
+          .row.messagesRow0
+            .col-sm-10
+              input#m.form-control(type='text', autofocus='', placeholder='Send a message') 
+            .col-sm-2
+              button#submitbtn.btn.btn-primary(type='submit') Send Message
+
+          .row.messagesRow1
+            .col-sm-12   
+              h3#whosTurn
+          .row
+            .col-sm-12.messagesRow1
+              h3#whoYouAre
+          .row
+            .col-sm-12.messagesRow2
+              h3#yourPoints
+
+    script(src='https://cdn.socket.io/socket.io-1.2.0.js')
+    script(src='js/sweetalert.min.js')
+    script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+    script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
+    script(src='js/logic.js')
+    script(src='js/janimate.js')
+    script.
+
+      $('.messagesRow1').hide();
+      $('.messagesRow2').hide();
+
+      $(document).ready(function () {
+        $('#gameBoard').jAnimate("bounceInUp");
+      });
+
+      $('.messagesRow0').jAnimate('fadeInRight');
+      setTimeout(function() { $('.messagesRow1').show(); $('.messagesRow1').jAnimate('fadeInRight'); }, 200);
+      setTimeout(function() { $('.messagesRow2').show(); $('.messagesRow2').jAnimate('fadeInRight'); }, 300);
+
+    script.
+      var board; // JS Object representing board
+      var hasMoved = false; // If you have moved
+      var player; // Which player you are
+      var turn; // Who turn it is
+      var playerPoints;
+      var selectedPiece; // JS Object of selected
+      var src; // Coordinates of selected piece
+      var hasSelectedPiece = false; // If a piece has been selected
+      var socket = io(); // Create a new socket for this user
+      
+      // Recieving board from server
+      socket.on('board', function(boardJSON) {
+        board = JSON.parse(boardJSON);
+        drawboard(board);
+      });
+
+      socket.on('player', function(playerType, points) {
+        player = playerType;
+        $("#whoYouAre").html("You are player " + player);
+        $("#yourPoints").html("You have " + points + " points.");
+      });
+
+      socket.on('startGame', function(firstTurn, points) {
+        turn = firstTurn;
+        playerPoints = points;
+        $("#whosTurn").html("It is player " + turn + "'s turn.");
+      });
+
+      var moveKey = 0;
+
+      /******************
+      * Messaging code *
+      ******************/
+      /* Sends the message in the message input box to the server */
+      function sendMessage() {
+        var messagePacket = {msg: $('#m').val(), username: player};
+        socket.emit('chat message', JSON.stringify(messagePacket));
+        $('#m').val('');
+      }
+
+      /* Socket listener for incoming message */
+      socket.on('chat message', function(response) {
+        var messagePacket = JSON.parse(response);
+        $('#messages').append("<tr><th>" + messagePacket.username + "</th><td style='word-break:break-all;'>" + messagePacket.msg + "</td></tr>");
+      });
+
+      /* Event Listener for clear button */
+      $('#clearButton').click(function (e) {
+        $('#messages').fadeOut(400, function() {
+          $('#messages').empty().fadeIn();
+        });
+      });
+
+      /* Event Listener for submit button */
+      $('#submitbtn').click(function(){
+        if ($('#m').val().trim() != "") {
+          sendMessage();
+        }
+      });
+
+      /* Event Listener for enter key to submit message */
+      $('#m').keypress(function (e) {
+        if (e.which == 13) {
+          if ($('#m').val().trim() != "") {
+            sendMessage();
+          }
+        }
+      });
+
+      /* Making a selection or move */
+      $('table').on("click", ".location",function() {
+        var tempSrc = $(this).attr('id').split("-"); // [x, y]
+        tempSrc = [parseInt(tempSrc[0]), parseInt(tempSrc[1])];
+        var pieceAtSpot = getPiece(board, tempSrc);
+        console.log(pieceAtSpot);
+        if (canSelect(pieceAtSpot)) { // Selecting a piece
+          src = tempSrc;
+          selectedPiece = pieceAtSpot; // Get Piece from Board
+          hasSelectedPiece = true;
+        } else { // Executing a move
+
+          var dest = tempSrc;
+          var move_status = canMove(selectedPiece, src, dest);
+          var moveBackwards = movedBackwards(selectedPiece, src, dest);
+
+          console.log(selectedPiece);
+          console.log(src);
+          console.log(dest);
+          console.log(movedBackwards(selectedPiece, src, dest));
+          console.log(playerPoints);
+          console.log(false);
+
+          if (move_status !== -1) { // we are at least moving
+
+            // Create New Board Object
+            board[dest[0]][dest[1]] = selectedPiece;
+            board[src[0]][src[1]] = null;
+
+            if (move_status === 1) { //capture
+              board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
+              src = dest;
+              if (selectedPiece.isKing) {
+                moveKey += 3;
+              } else {
+                moveKey += 2;
+              }
+            } else if (move_status === 0) {//move
+              hasSelectedPiece = false; //turn has to be over
+            }
+
+            if (canKing(selectedPiece, dest)) {
+              selectedPiece.isKing = true;
+            }
+
+            if (moveBackwards && !selectedPiece.isKing) {
+              moveKey -= 1;
+            }
+
+            hasMoved = true;
+            drawboard(board);
+            socket.emit('refreshBoard', JSON.stringify(board), moveKey);
+          }
+        }
+
+      //Default points in bank for everybody is 2
+      //Any non-king move backwards is -1
+      //Any capture is 2
+      //Any king capture is 3
+      });
+
+      $('body').keypress(function(e) {
+        if (e.keyCode == 32 && hasMoved) {//can end turn
+          endTurn();
+          socket.emit('turnEnded', JSON.stringify(board));
+          //switch whose turn it is
+        }
+      });
+      
+    script(src='/js/bootstrap.min.js')

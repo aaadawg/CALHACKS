@@ -135,7 +135,7 @@ io.on('connection', function(socket) {
 	/* If a player disconnects */
 	socket.on('disconnect', function() {
 		disconnectedColor = socketIDToColor[socket.id];
-		if (gameStarted) {
+		if (gameStarted && disconnectedColor != null) {
 			io.emit('disconnectError');
 		}
 		availablePlayers.push(disconnectedColor);
@@ -144,7 +144,10 @@ io.on('connection', function(socket) {
 		delete pieceCounts[disconnectedColor];
 		delete colorToSocket[disconnectedColor];
 		numberOfClients--;
-		startNewGame();
+		if (disconnectedColor != null) {
+			startNewGame();
+		}
+		console.log(numberOfClients);
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
 

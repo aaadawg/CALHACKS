@@ -115,7 +115,6 @@ function getPiece(src) {
 
 function movedBackwards(piece, src, dest) {
 	var zeroDiff = dest[0] - src[0];
-	console.log("difference " + zeroDiff)
 	if (piece.isKing) {
 		return true;
 	} else if (zeroDiff == 1 || zeroDiff == 2) {

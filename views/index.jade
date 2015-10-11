@@ -15,6 +15,9 @@ html(lang='en')
     link(rel='stylesheet' type='text/css' href='css/animate.min.css')
     link(rel='stylesheet' type='text/css' href='css/alertify.min.css')
     link(rel='stylesheet' type='text/css' href='css/themes/default.css')
+    link(rel='stylesheet' type='text/css' href='css/please-wait.css')
+    link(rel='stylesheet' type='text/css' href='css/spinkit.css')
+    link(rel='stylesheet' type='text/css' href='css/barSpinner.css')
 
   body
     // Main container
@@ -109,7 +112,15 @@ html(lang='en')
     script(src='js/logic.js')
     script(src='js/alertify.min.js')
     script(src='js/janimate.js')
+    script(src='js/please-wait.js')
     script.
+
+      var loading_screen = pleaseWait({
+        logo: "images/logo.jpg",
+        backgroundColor: '#2b3e50',
+        loadingHtml: "<div class='spinner'></div>"
+        //<div class='spinner'><div class='rect1'></div><div class='rect2'></div><div class='rect3'></div><div class='rect4'></div><div class='rect5'></div></div>"
+      });
 
       $('.messagesRow1').hide();
       $('.messagesRow2').hide();
@@ -129,6 +140,8 @@ html(lang='en')
       $('#rulesDiv').mouseenter(function() {
         $(this).stop();
       });
+
+      setTimeout(function() { loading_screen.finish(); }, 5000);
 
     script.
 

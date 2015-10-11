@@ -151,6 +151,10 @@ io.on('connection', function(socket) {
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
 
+	socket.on('pieceSelected', function(msg) {
+		io.emit('pieceSelected', msg);
+	});
+
 	/* if a player reenters a lobby after a disconnect error. */
 	socket.on('reEnterLobby', function(player) {
 		colorToPoints[player] = DEFAULT_POINTS;

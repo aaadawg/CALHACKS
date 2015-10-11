@@ -160,7 +160,6 @@ html(lang='en')
       socket.on('board', function(boardJSON) {
         board = JSON.parse(boardJSON);
         for (var a = 0; a < offsets[player]; a++) {
-          console.log("rotating");
           board = rotateClockwise(board);
         }
         drawboard(board);
@@ -230,6 +229,9 @@ html(lang='en')
       });
 
       socket.on('newTurn', function(newTurn) {
+        if (selectedLink != null) {
+          selectedLink.removeClass('selectedPiece');
+        }
         if (newTurn === player) {
           alertify.success("It is your turn!");
         }
@@ -319,6 +321,18 @@ html(lang='en')
         }
       });
 
+      socket.on('pieceSelected', function(msg) {
+
+        if (selectedLink != null) {
+          selectedLink.removeClass('selectedPiece');
+        }
+
+        var absoluteCoordinates = JSON.parse(msg);
+        var relativeCoordinates = rotateCoordinates(absoluteCoordinates, offsets[player]);
+        selectedLink = $('#' + relativeCoordinates[0] + '-' + relativeCoordinates[1]).children()
+        selectedLink.addClass('selectedPiece');
+      });
+
       /* Making a selection or move */
       $('table').on("click", ".location", function() {
         var tempSrc = $(this).attr('id').split("-"); // [x, y]
@@ -335,6 +349,8 @@ html(lang='en')
           hasSelectedPiece = true;
           selectedLink = $(this).children();
           selectedLink.addClass("selectedPiece");
+          socket.emit('pieceSelected', JSON.stringify(rotateCoordinates(src, (4-offsets[player]) % 4)));
+
         } else if (hasSelectedPiece) { // Executing a move
 
           var dest = tempSrc;
@@ -347,7 +363,7 @@ html(lang='en')
             board[dest[0]][dest[1]] = selectedPiece;
             board[src[0]][src[1]] = null;
 
-            if (move_status === 1) { //capture
+            if (move_status === 1) { // Jump move
               var midX = (src[0] + dest[0])/2;
               var midY = (src[1] + dest[1])/2;
               var capturedPiece = getPiece([midX, midY]);
@@ -377,6 +393,7 @@ html(lang='en')
               board = rotateClockwise(board);
             }
             socket.emit('refreshBoard', JSON.stringify(board), moveKey);
+            socket.emit('pieceSelected', JSON.stringify(rotateCoordinates(src, (4-offsets[player]) % 4)));
             moveKey = 0;
           }
         }
@@ -391,6 +408,7 @@ html(lang='en')
         if (e.keyCode == 32 && hasMoved) {//can end turn
           endTurn();
           socket.emit('turnEnded', JSON.stringify(board));
+          selectedLink.removeClass('selectedPiece');
           //switch whose turn it is
         }
       });

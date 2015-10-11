@@ -19,6 +19,18 @@ function rotateClockwise(old_board) {
 	return new_board;
 }
 
+function rotateCoordinates(coordinates, n) {
+	coordinates = coordinates.slice(0);
+	while (n > 0) {
+		oldX = coordinates[0]
+		oldY = coordinates[1]
+		coordinates[0] = oldY
+		coordinates[1] = 11 - oldX
+		n--;
+	}
+	return coordinates;
+}
+
 function drawboard(board) {
     $("#gameBoard").empty();
     for (var i = 0; i < board.length; i++) {

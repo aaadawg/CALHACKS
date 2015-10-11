@@ -97,6 +97,10 @@ html(lang='en')
         $('#rulesDiv').animate({ scrollTop:  $('#rulesDiv').scrollTop() + 220 }, 20000, "linear");
       });
 
+      $('#rulesDiv').mouseenter(function() {
+        $(this).stop();
+      });
+
     script.
 
       var board; // JS Object representing board

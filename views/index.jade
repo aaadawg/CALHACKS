@@ -13,6 +13,8 @@ html(lang='en')
     link(href='css/checkers.css', rel='stylesheet')
     link(rel='stylesheet', type='text/css', href='css/sweetalert.css')
     link(rel='stylesheet' type='text/css' href='css/animate.min.css')
+    link(rel='stylesheet' type='text/css' href='css/alertify.min.css')
+    link(rel='stylesheet' type='text/css' href='css/themes/default.css')
 
   body
     // Main container
@@ -105,6 +107,7 @@ html(lang='en')
     script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
     script(src='//code.jquery.com/ui/1.11.4/jquery-ui.js')
     script(src='js/logic.js')
+    script(src='js/alertify.min.js')
     script(src='js/janimate.js')
     script.
 
@@ -171,9 +174,11 @@ html(lang='en')
         setPoints(JSON.parse(pointsArr));
       });
 
+      socket.on('yourTurn', function() {
+        alertify.success("It is your turn!");
+      });
+
       socket.on('updateGameState', function(firstTurn, points, pieces) {
-        console.log(pieces);
-        console.log(points);
         pointsArr = JSON.parse(points);
         piecesArr = JSON.parse(pieces);
         console.log(piecesArr);
@@ -182,6 +187,12 @@ html(lang='en')
         $("#whosTurn").html("It is player " + turn + "'s turn.");
         setPoints(pointsArr);
         setPieces(piecesArr);
+      });
+
+      socket.on('newTurn', function(newTurn) {
+        if (newTurn === player) {
+          alertify.success("It is your turn!");
+        }
       });
 
       /* Socket listener for you lose */

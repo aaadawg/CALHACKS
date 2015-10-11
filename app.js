@@ -48,6 +48,7 @@ var availablePlayers = ['red', 'white', 'gold', 'blue'];
 var deadPlayers = [];
 var socketIDToColor = {};
 var socketIDToSocket = {}
+var colorToSocket = {}
 var colorToPoints = {};
 var turnCounter = 0;
 var turn = players[turnCounter % (players.length)];
@@ -101,12 +102,12 @@ io.on('connection', function(socket) {
 	colorForSocket = availablePlayers.pop(); // Choose an available player
 	socketIDToColor[socket.id] = colorForSocket; // Add to dictionary
 	socketIDToSocket[socket.id] = socket; // Add to socket dictionary
+	colorToSocket[colorForSocket] = socket;
 	colorToPoints[colorForSocket] = DEFAULT_POINTS; //Every player gets 2 points to start
 	pieceCounts[colorForSocket] = NUM_PIECES_START; //Every color starts with 8 pieces
 	socket.emit('player', colorForSocket, JSON.stringify(colorToPoints)); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
 	io.emit('allPieces', JSON.stringify(pieceCounts));
-	console.log(JSON.stringify(pieceCounts));
 	io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	if (numberOfClients == 4) {
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
@@ -117,9 +118,9 @@ io.on('connection', function(socket) {
 		disconnectedColor = socketIDToColor[socket.id];
 		availablePlayers.push(disconnectedColor);
 		delete socketIDToColor[socket.id];
-		console.log(disconnectedColor);
 		delete colorToPoints[disconnectedColor];
 		delete pieceCounts[disconnectedColor];
+		delete colorToSocket[disconnectedColor];
 		numberOfClients--;
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
@@ -156,17 +157,20 @@ io.on('connection', function(socket) {
 	//  2 --> capture
 	//  3 --> kingCapture
 
-
 	socket.on('turnEnded', function(msg) {
+		console.log("turn ended");
 		var newGameState = JSON.parse(msg);
 		io.emit('killedPlayers', JSON.stringify(deadPlayers));
 		turnCounter++;
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		turn = players[turnCounter % (players.length)];
+		
 		while (deadPlayers.indexOf(turn) != -1) {
 			turnCounter ++;
 			turn = players[turnCounter % (players.length)];
 		}
+
+		io.emit('newTurn', turn);
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
 
@@ -180,7 +184,6 @@ io.on('connection', function(socket) {
 
     /* Messaging Client */
      socket.on('chat message', function(msg){
-        console.log('message: ' + msg);
         io.emit('chat message', msg);
     });
     

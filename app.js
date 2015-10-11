@@ -91,6 +91,7 @@ io.on('connection', function(socket) {
 	pieceCounts[colorForSocket] = NUM_PIECES_START; //Every color starts with 8 pieces
 	socket.emit('player', colorForSocket, JSON.stringify(colorToPoints)); // Send to client
 	io.emit('board', JSON.stringify(board)); // Send current board to all sockets
+	io.emit('allPieces', JSON.stringify(pieceCounts));
 
 	if (numberOfClients == 4) {
 		io.emit('startGame', turn, JSON.stringify(colorToPoints));
@@ -107,6 +108,7 @@ io.on('connection', function(socket) {
 	/* If a piece is captured. */
 	socket.on('pieceCaptured', function(team) {
 		pieceCounts[team] -= 1;
+		io.emit('allPieces', JSON.stringify(pieceCounts));
 		if (pieceCounts[team] == 0) {
 			socket.emit('youLost', team);
 		}
@@ -130,6 +132,7 @@ io.on('connection', function(socket) {
 		colorToPoints[turn] += pointKey;
 		board = JSON.parse(JSONBoard);
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
+		io.emit('startGame', turn, JSON.stringify(colorToPoints));
 		io.emit('board', JSON.stringify(board));
 	})
 

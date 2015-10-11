@@ -145,6 +145,11 @@ html(lang='en')
         }
       });
 
+      socket.on('allPieces', function(pieces) {
+        pieces = JSON.parse(pieces);
+        //dictionary of team to number of pieces.
+      });
+
       /* Socket listener for you lose */
       socket.on('youLost', function(player) {
         $("#yourPoints").html("You have zero pieces left. You lost!");
@@ -224,9 +229,9 @@ html(lang='en')
               board[midX][midY] = null;
               src = dest;
               if (selectedPiece.isKing) {
-                moveKey += 3;
+                moveKey = 3;
               } else {
-                moveKey += 2;
+                moveKey = 2;
               }
             } else if (move_status === 0) {//move
               hasSelectedPiece = false; //turn has to be over
@@ -237,7 +242,7 @@ html(lang='en')
             }
 
             if (moveBackwards && !selectedPiece.isKing) {
-              moveKey -= 1;
+              moveKey = -1;
             }
 
             hasMoved = true;
@@ -246,6 +251,7 @@ html(lang='en')
               board = rotateClockwise(board);
             }
             socket.emit('refreshBoard', JSON.stringify(board), moveKey);
+            moveKey = 0;
           }
         }
 

@@ -290,7 +290,7 @@ html(lang='en')
               socket.emit('pieceCaptured', capturedPiece.team);
               board[midX][midY] = null;
               src = dest;
-              if (selectedPiece.isKing) {
+              if (capturedPiece.isKing) {
                 moveKey += 3;
               } else {
                 moveKey += 2;

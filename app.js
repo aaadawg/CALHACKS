@@ -155,7 +155,7 @@ io.on('connection', function(socket) {
 	//  0 --> normal move
 	// -1 --> nonKing backwards move
 	//  2 --> capture
-	//  3 --> kingCapture
+	//  3 --> king was captured
 
 	socket.on('turnEnded', function(msg) {
 		console.log("turn ended");

@@ -79,10 +79,15 @@ html(lang='en')
       var src; // Coordinates of selected piece
       var hasSelectedPiece = false; // If a piece has been selected
       var socket = io(); // Create a new socket for this user
+      var offsets = {"gold": 0, "white": 1, "blue": 2, "red": 3}; // offset for rotation amounts for each client
       
       // Recieving board from server
       socket.on('board', function(boardJSON) {
         board = JSON.parse(boardJSON);
+        for (var a = 0; a < offsets[player]; a++) {
+          console.log("rotating");
+          board = rotateClockwise(board);
+        }
         drawboard(board);
       });
 
@@ -190,6 +195,9 @@ html(lang='en')
 
             hasMoved = true;
             drawboard(board);
+            for (var b = 0; b < (4 - offsets[player]) % 4; b++) {
+              board = rotateClockwise(board);
+            }
             socket.emit('refreshBoard', JSON.stringify(board), moveKey);
           }
         }

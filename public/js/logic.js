@@ -41,7 +41,7 @@ function drawboard(board) {
 
 
 function canSelect(piece) {
-	if (piece != null && piece.team == player) {
+	if (piece != null && piece.team == turn) {
 		if (!hasMoved) {
 			return true;
 		}

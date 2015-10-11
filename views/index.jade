@@ -112,7 +112,7 @@ html(lang='en')
         $("#whoYouAre").html("You are player " + player);
         $("#allPoints").empty();
         for (var key in pointsArr) {
-          $("#allPoints").append(key + "'s points: " + pointsArr[key] + ".");
+          $("#allPoints").append(key + "'s points: " + pointsArr[key] + ". ");
         }
       });
 
@@ -123,7 +123,7 @@ html(lang='en')
         $("#whosTurn").html("It is player " + turn + "'s turn.");
         $("#allPoints").empty();
         for (var key in points) {
-          $("#allPoints").append(key + "'s points: " + points[key] + ".");
+          $("#allPoints").append(key + "'s points: " + points[key] + ". ");
         }
       });
 
@@ -178,7 +178,7 @@ html(lang='en')
       $('table').on("click", ".location",function() {
         var tempSrc = $(this).attr('id').split("-"); // [x, y]
         tempSrc = [parseInt(tempSrc[0]), parseInt(tempSrc[1])];
-        var pieceAtSpot = getPiece(board, tempSrc);
+        var pieceAtSpot = getPiece(tempSrc);
         if (canSelect(pieceAtSpot)) { // Selecting a piece
           src = tempSrc;
           selectedPiece = pieceAtSpot; // Get Piece from Board
@@ -199,7 +199,8 @@ html(lang='en')
             board[src[0]][src[1]] = null;
 
             if (move_status === 1) { //capture
-              capturedPiece = getPiece((src[0] + dest[0])/2,(src[1] + dest[1])/2);
+              capturedPiece = getPiece([(src[0] + dest[0])/2,(src[1] + dest[1])/2]);
+              console.log(capturedPiece);
               socket.emit('pieceCaptured', capturedPiece.team);
               board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
               src = dest;

@@ -109,7 +109,7 @@ function canKing(piece, location) {
 	return false;
 }
 
-function getPiece(board, src) {
+function getPiece(src) {
 	return board[src[0]][src[1]];
 }
 

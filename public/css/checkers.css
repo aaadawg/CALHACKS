@@ -7,6 +7,7 @@
 	text-decoration:none;
 	text-shadow:0 1px #fff;
 	text-align: center;
+	font-weight: bold;
 	width:55px;
 }
 #gameBoard { border:5px solid #333; }
@@ -49,10 +50,10 @@ a.gold:hover {
 	color: #FDB515;
 }
 .white {
-	color: #999999;
+	color: black;
 }
 a.white:hover {
-	color: #999999
+	color: black;
 }
 .red {
 	color: #A60000;

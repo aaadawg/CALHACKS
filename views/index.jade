@@ -139,6 +139,7 @@ html(lang='en')
       var hasSelectedPiece = false; // If a piece has been selected
       var socket = io(); // Create a new socket for this user
       var offsets = {"gold": 0, "white": 1, "blue": 2, "red": 3}; // offset for rotation amounts for each client
+      var notifiedOfDeath = false;
       
       // Recieving board from server
       socket.on('board', function(boardJSON) {
@@ -184,8 +185,13 @@ html(lang='en')
       });
 
       /* Socket listener for you lose */
-      socket.on('youLost', function(player) {
-        sweetAlert("Oops...", "You lost! Better luck next time", "error");
+
+      socket.on('killedPlayers', function(killedPlayers) {
+        var killedPlayers = JSON.parse(killedPlayers);
+        if (killedPlayers.indexOf(player) != -1 && !notifiedOfDeath) {
+          sweetAlert("Oops...", "You lost! Better luck next time", "error");
+          notifiedOfDeath = true;
+        }
       });
 
       /* Socket listener for you win */
@@ -193,12 +199,12 @@ html(lang='en')
         sweetAlert("Good Job!", "You Wrecked It!", "success");
         swal({  title: "One More?",   
                 text: "Enter the Next Game",   
-                type: "warning",   showCancelButton: true,   
+                type: "success",   showCancelButton: true,   
                 confirmButtonColor: "#DD6B55",   
                 confirmButtonText: "Yes, lets go!",   
                 closeOnConfirm: false }, function(){   swal("Success", "You will be loaded into the next game.", "success"); });
 
-      })
+      });
 
       var moveKey = 0;
 
@@ -274,9 +280,9 @@ html(lang='en')
               board[midX][midY] = null;
               src = dest;
               if (selectedPiece.isKing) {
-                moveKey = 3;
+                moveKey += 3;
               } else {
-                moveKey = 2;
+                moveKey += 2;
               }
             } else if (move_status === 0) {//move
               hasSelectedPiece = false; //turn has to be over
@@ -287,7 +293,7 @@ html(lang='en')
             }
 
             if (moveBackwards && !selectedPiece.isKing) {
-              moveKey = -1;
+              moveKey += -1;
             }
 
             hasMoved = true;

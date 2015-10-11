@@ -40,11 +40,12 @@ app.get('/', function(req, res) {
  * Game Logic *
  **************/
 var DEFAULT_POINTS = 2;
-var NUM_PIECES_START = 8;
+var NUM_PIECES_START = 1;
 var numberOfClients = 0;
 var board = createBoard();
 var players = ['red', 'white', 'gold', 'blue'];
 var availablePlayers = ['red', 'white', 'gold', 'blue'];
+var deadPlayers = [];
 var socketIDToColor = {};
 var socketIDToSocket = {}
 var colorToPoints = {};
@@ -62,18 +63,31 @@ function createPiece(team) {
 
 /* Creates Initial Board */
 function createBoard() {
-    return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
-            [null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
-            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-            [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
-            [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
-            [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
-            [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
+    // return [[null, null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null],
+    //         [null, null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, createPiece("blue"), null, null, null],
+    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+    //         [createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white"), null],
+    //         [null, createPiece("red"), null, null, null, null, null, null, null, null, null, createPiece("white")],
+    //         [null, null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null],
+    //         [null, null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, createPiece("gold"), null, null, null]];
+
+    return [[null, null, null, null, null, null, null, null, null, null, null, null], 
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, createPiece("gold"), createPiece("red"), null, null, null, null, null, null, null, null],
+					 [null, null, createPiece("white"), createPiece("blue"), null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null],
+					 [null, null, null, null, null, null, null, null, null, null, null, null]];
 }
 
 /*************************
@@ -115,11 +129,22 @@ io.on('connection', function(socket) {
 		pieceCounts[team] -= 1;
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 		if (pieceCounts[team] == 0) {
-			socket.emit('youLost', team);
-			var index = players.indexOf(team);
-			players.splice(index, 1);
-			if (players.length == 1) {
-				socket.emit('youWin', players[0]);
+			//socket.emit('youLost', team);
+			//var index = players.indexOf(team);
+			//players.splice(index, 1);
+			deadPlayers.push(team);
+			console.log("dead:");
+			console.log(team);
+			if (deadPlayers.length == 3) {
+				var winner;
+				for (var p in players) {
+					if (deadPlayers.indexOf(p) == -1) {
+						winner = p;
+						break;
+					}
+				}
+
+				socket.emit('youWin', winner);
 				// END GAME
 			}
 		}
@@ -134,11 +159,16 @@ io.on('connection', function(socket) {
 
 	socket.on('turnEnded', function(msg) {
 		var newGameState = JSON.parse(msg);
+		io.emit('killedPlayers', JSON.stringify(deadPlayers));
 		turnCounter++;
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		turn = players[turnCounter % (players.length)];
+		while (deadPlayers.indexOf(turn) != -1) {
+			turnCounter ++;
+			turn = players[turnCounter % (players.length)];
+		}
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
-	})
+	});
 
 	socket.on('refreshBoard', function(JSONBoard, pointKey) {
 		colorToPoints[turn] += pointKey;
@@ -146,7 +176,7 @@ io.on('connection', function(socket) {
 		socket.emit('player', turn, JSON.stringify(colorToPoints));
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 		io.emit('board', JSON.stringify(board));
-	})
+	});
 
     /* Messaging Client */
      socket.on('chat message', function(msg){

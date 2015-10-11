@@ -155,7 +155,6 @@ html(lang='en')
       });
 
       socket.on('disconnectError', function() {
-        sweetAlert("Oh no!", "Someone disconnected. Shame on them.", "error");
         swal({
           title: "Oh no!",
           text: "Someone disconnected. Shame on them.",
@@ -171,7 +170,7 @@ html(lang='en')
             swal("Great!", "Your game will begin shortly.", "success");
             socket.emit('reEnterLobby', player);
           } else {
-            swal("Aww.", "We will see you again. Right now actually.", "error");
+            swal("Aww.", "We will see you again. Because you can't leave...", "error");
           }
         });
       });
@@ -199,10 +198,6 @@ html(lang='en')
       socket.on('startMessage', function() {
         sweetAlert("New Game", "A new game has started!", "success");
       });
-
-      //- socket.on('yourTurn', function() {
-      //-   alertify.success("It is your turn!");
-      //- });
 
       socket.on('updateGameState', function(firstTurn, points, pieces) {
         pointsArr = JSON.parse(points);
@@ -236,13 +231,24 @@ html(lang='en')
 
       /* Socket listener for you win */
       socket.on('youWin', function(player) {
-        sweetAlert("Good Job!", "You Wrecked It!", "success");
-        swal({  title: "One More?",   
-                text: "Enter the Next Game",   
-                type: "success",   showCancelButton: true,   
-                confirmButtonColor: "#DD6B55",   
-                confirmButtonText: "Yes, lets go!",   
-                closeOnConfirm: false }, function(){   swal("Success", "You will be loaded into the next game.", "success"); });
+        swal({
+          title: "Good Job!",
+          text: "You Wrecked It!",
+          type: "success",
+          showCancelButton: true,
+          confirmButtonColor: "#DD6B55",
+          confirmButtonText: "Join new lobby?",
+          cancelButtonText: "I'm out yo",
+          closeOnConfirm: false,
+          closeOnCancel: false
+        }, function(isConfirm) {
+          if (isConfirm) {
+            swal("Great!", "You will be loaded into the next game.", "success");
+            socket.emit('reEnterLobby', player);
+          } else {
+            swal("Aww.", "We will see you again. Because you can't leave...", "error");
+          }
+        });
 
       });
 

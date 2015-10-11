@@ -62,7 +62,7 @@ html(lang='en')
                 h3#whoYouAre
             .row
               .col-sm-12.messagesRow2
-                h3#yourPoints
+                h3#allPoints
 
     script(src='https://cdn.socket.io/socket.io-1.2.0.js')
     script(src='js/sweetalert.min.js')
@@ -106,17 +106,30 @@ html(lang='en')
         drawboard(board);
       });
 
-      socket.on('player', function(playerType, points) {
+      socket.on('player', function(playerType, pointsArr) {
+        pointsArr = JSON.parse(pointsArr);
         player = playerType;
         $("#whoYouAre").html("You are player " + player);
-        $("#yourPoints").html("You have " + points + " points.");
+        $("#allPoints").empty();
+        for (var key in pointsArr) {
+          $("#allPoints").append(key + "'s points: " + pointsArr[key] + ".");
+        }
       });
 
       socket.on('startGame', function(firstTurn, points) {
+        points = JSON.parse(points);
         turn = firstTurn;
-        console.log(turn);
-        playerPoints = points;
+        playerPoints = points[turn];
         $("#whosTurn").html("It is player " + turn + "'s turn.");
+        $("#allPoints").empty();
+        for (var key in points) {
+          $("#allPoints").append(key + "'s points: " + points[key] + ".");
+        }
+      });
+
+      /* Socket listener for you lose */
+      socket.on('youLost', function(player) {
+        $("#yourPoints").html("You have zero pieces left. You lost!");
       });
 
       var moveKey = 0;
@@ -186,6 +199,8 @@ html(lang='en')
             board[src[0]][src[1]] = null;
 
             if (move_status === 1) { //capture
+              capturedPiece = getPiece((src[0] + dest[0])/2,(src[1] + dest[1])/2);
+              socket.emit('pieceCaptured', capturedPiece.team);
               board[(src[0] + dest[0])/2][(src[1] + dest[1])/2] = null;
               src = dest;
               if (selectedPiece.isKing) {

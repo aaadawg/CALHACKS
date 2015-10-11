@@ -116,7 +116,6 @@
           drawboard(board);
         });
 
-<<<<<<< HEAD
         socket.on('player', function(playerType, points) {
             player = playerType;
             $("#whoYouAre").html("You are player " + player);
@@ -131,16 +130,6 @@
         })
 
         var moveKey = 0;
-=======
-        socket.on('player', function(playerType) {
-          player = playerType;
-          $("#whoYouAre").html("You are player " + player);
-        });
-
-        socket.on('startGame', function(firstTurn) {
-          turn = firstTurn;
-          $("#whosTurn").html("It is player " + turn + "'s turn.");
-        })
 
         /******************
          * Messaging code *
@@ -186,7 +175,6 @@
             }
           }
         });
->>>>>>> origin/master
 
         /* Making a selection or move */
         $('table').on("click", ".location",function() {

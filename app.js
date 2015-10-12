@@ -147,7 +147,6 @@ io.on('connection', function(socket) {
 		if (disconnectedColor != null) {
 			startNewGame();
 		}
-		console.log(numberOfClients);
 		io.emit('updateGameState', turn, JSON.stringify(colorToPoints), JSON.stringify(pieceCounts));
 	});
 
